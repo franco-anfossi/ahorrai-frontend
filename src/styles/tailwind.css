@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary Colors */
+    --color-primary: #1E40AF; /* Deep blue (primary) - blue-800 */
+    --color-primary-50: #EFF6FF; /* Light blue (50-level shade) - blue-50 */
+    --color-primary-100: #DBEAFE; /* Light blue (100-level shade) - blue-100 */
+    --color-primary-500: #3B82F6; /* Medium blue (500-level shade) - blue-500 */
+    --color-primary-600: #2563EB; /* Medium-dark blue (600-level shade) - blue-600 */
+    --color-primary-700: #1D4ED8; /* Dark blue (700-level shade) - blue-700 */
+    
+    /* Secondary Colors */
+    --color-secondary: #6366F1; /* Vibrant indigo (secondary) - indigo-500 */
+    --color-secondary-50: #EEF2FF; /* Light indigo (50-level shade) - indigo-50 */
+    --color-secondary-100: #E0E7FF; /* Light indigo (100-level shade) - indigo-100 */
+    --color-secondary-400: #818CF8; /* Medium-light indigo (400-level shade) - indigo-400 */
+    --color-secondary-600: #5B21B6; /* Medium-dark indigo (600-level shade) - indigo-600 */
+    
+    /* Accent Colors */
+    --color-accent: #10B981; /* Fresh green (accent) - emerald-500 */
+    --color-accent-50: #ECFDF5; /* Light green (50-level shade) - emerald-50 */
+    --color-accent-100: #D1FAE5; /* Light green (100-level shade) - emerald-100 */
+    --color-accent-400: #34D399; /* Medium-light green (400-level shade) - emerald-400 */
+    --color-accent-600: #059669; /* Medium-dark green (600-level shade) - emerald-600 */
+    
+    /* Background Colors */
+    --color-background: #F8FAFC; /* Soft off-white (background) - slate-50 */
+    --color-surface: #FFFFFF; /* Pure white (surface) - white */
+    --color-surface-hover: #F1F5F9; /* Light gray hover (surface-hover) - slate-100 */
+    
+    /* Text Colors */
+    --color-text-primary: #1F2937; /* Rich charcoal (text-primary) - gray-800 */
+    --color-text-secondary: #6B7280; /* Balanced gray (text-secondary) - gray-500 */
+    --color-text-muted: #9CA3AF; /* Light gray (text-muted) - gray-400 */
+    
+    /* Status Colors */
+    --color-success: #059669; /* Deeper green (success) - emerald-600 */
+    --color-success-50: #ECFDF5; /* Light success green (50-level shade) - emerald-50 */
+    --color-success-100: #D1FAE5; /* Light success green (100-level shade) - emerald-100 */
+    
+    --color-warning: #D97706; /* Warm amber (warning) - amber-600 */
+    --color-warning-50: #FFFBEB; /* Light warning amber (50-level shade) - amber-50 */
+    --color-warning-100: #FEF3C7; /* Light warning amber (100-level shade) - amber-100 */
+    
+    --color-error: #DC2626; /* Clear red (error) - red-600 */
+    --color-error-50: #FEF2F2; /* Light error red (50-level shade) - red-50 */
+    --color-error-100: #FEE2E2; /* Light error red (100-level shade) - red-100 */
+    
+    /* Border Colors */
+    --color-border: #E5E7EB; /* Light border gray - gray-200 */
+    --color-border-focus: #3B82F6; /* Focus border blue - blue-500 */
+    
+    /* Shadow Colors */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-text-primary font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+  
+  .font-data {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum" 1;
+  }
+}
+
+@layer components {
+  .spring-transition {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 250ms;
+  }
+  
+  .card-shadow {
+    box-shadow: var(--shadow);
+  }
+  
+  .card-shadow-hover {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
