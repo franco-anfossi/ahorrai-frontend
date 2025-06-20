@@ -5,7 +5,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#3B82F6" />
         <meta name="description" content="Ahorrai - Financial Management App" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />
