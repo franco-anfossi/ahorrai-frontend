@@ -77,7 +77,7 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = ({ onAction }) => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          w-14 h-14 rounded-full bg-primary hover:bg-primary-700 text-white 
+          w-14 h-14 rounded-full bg-primary-600 hover:bg-primary-700 text-white 
           shadow-lg spring-transition flex items-center justify-center
           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
           transform hover:scale-105 active:scale-95
