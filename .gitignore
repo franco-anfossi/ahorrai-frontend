@@ -1,0 +1,13 @@
+.vercel
+.node_modules
+.dist
+.build
+.public
+.src
+.types
+.utils
+.components
+.hooks
+.pages
+*.env
+.next
