@@ -29,6 +29,15 @@ export interface Category {
   lastTransaction: string;
 }
 
+// Payment Method Types
+export interface PaymentMethod {
+  id: number;
+  name: string;
+  icon: string;
+  type: 'card' | 'cash' | 'transfer' | 'digital';
+  last4?: string;
+}
+
 // Budget Types
 export interface Budget {
   id: number;

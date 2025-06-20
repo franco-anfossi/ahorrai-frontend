@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
-import { Category } from 'types';
+import { Category } from '../../../types';
 
 interface AlertSettingsProps {
   categories: Category[];

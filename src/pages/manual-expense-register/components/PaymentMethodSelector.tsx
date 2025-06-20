@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@/components/AppIcon';
-
-interface PaymentMethod {
-  id: string;
-  name: string;
-  icon: string;
-  type: 'card' | 'cash' | 'transfer' | 'digital';
-  last4?: string;
-}
+import { PaymentMethod } from '@/types';
 
 interface PaymentMethodSelectorProps {
   paymentMethods: PaymentMethod[];

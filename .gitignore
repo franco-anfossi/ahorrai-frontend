@@ -1,7 +1,7 @@
 .vercel
-.node_modules
-.dist
-.build
+node_modules
+dist/*
+/build
 .public
 .src
 .types
@@ -11,3 +11,5 @@
 .pages
 *.env
 .next
+package-lock.json
+tsconfig.tsbuildinfo

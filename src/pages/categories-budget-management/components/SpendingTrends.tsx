@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from 'recharts';
 import Icon from 'components/AppIcon';
 import { Category } from 'types';
@@ -33,8 +33,8 @@ interface TrendResult {
 }
 
 const SpendingTrends: React.FC<SpendingTrendsProps> = ({ categories }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('3months');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedPeriod, setSelectedPeriod] = React.useState<string>('3months');
+  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
 
   // Mock trend data
   const trendData: Record<string, TrendDataPoint[]> = {
@@ -71,8 +71,11 @@ const SpendingTrends: React.FC<SpendingTrendsProps> = ({ categories }) => {
     const data = currentData;
     if (data.length < 2) return { change: 0, direction: 'stable' };
     
-    const latest = data[data.length - 1][categoryName as keyof TrendDataPoint] || 0;
-    const previous = data[data.length - 2][categoryName as keyof TrendDataPoint] || 0;
+    const latest = Number(data[data.length - 1][categoryName as keyof TrendDataPoint]) || 0;
+    const previous = Number(data[data.length - 2][categoryName as keyof TrendDataPoint]) || 0;
+    
+    if (previous === 0) return { change: 0, direction: 'stable' };
+    
     const change = ((latest - previous) / previous * 100);
     
     return {

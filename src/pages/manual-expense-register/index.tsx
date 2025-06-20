@@ -8,13 +8,7 @@ import CategorySelector from './components/CategorySelector';
 import PaymentMethodSelector from './components/PaymentMethodSelector';
 import DatePicker from './components/DatePicker';
 import PhotoAttachment from './components/PhotoAttachment';
-import { Category } from '@/types';
-
-interface PaymentMethod {
-  id: number;
-  name: string;
-  icon: string;
-}
+import { Category, PaymentMethod } from '@/types';
 
 interface PhotoData {
   file: File;
@@ -62,23 +56,23 @@ const ManualExpenseRegister: React.FC = () => {
   ];
 
   const categories: Category[] = [
-    { id: "1", name: "Comida y Restaurantes", icon: "UtensilsCrossed", color: "bg-red-100 text-red-600" },
-    { id: "2", name: "Transporte", icon: "Car", color: "bg-blue-100 text-blue-600" },
-    { id: "3", name: "Compras", icon: "ShoppingBag", color: "bg-purple-100 text-purple-600" },
-    { id: "4", name: "Entretenimiento", icon: "Film", color: "bg-pink-100 text-pink-600" },
-    { id: "5", name: "Facturas y Servicios", icon: "Receipt", color: "bg-yellow-100 text-yellow-600" },
-    { id: "6", name: "Salud", icon: "Heart", color: "bg-green-100 text-green-600" },
-    { id: "7", name: "Viajes", icon: "Plane", color: "bg-indigo-100 text-indigo-600" },
-    { id: "8", name: "Educación", icon: "GraduationCap", color: "bg-teal-100 text-teal-600" }
+    { id: 1, name: "Comida y Restaurantes", icon: "UtensilsCrossed", color: "bg-red-100 text-red-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 2, name: "Transporte", icon: "Car", color: "bg-blue-100 text-blue-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 3, name: "Compras", icon: "ShoppingBag", color: "bg-purple-100 text-purple-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 4, name: "Entretenimiento", icon: "Film", color: "bg-pink-100 text-pink-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 5, name: "Facturas y Servicios", icon: "Receipt", color: "bg-yellow-100 text-yellow-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 6, name: "Salud", icon: "Heart", color: "bg-green-100 text-green-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 7, name: "Viajes", icon: "Plane", color: "bg-indigo-100 text-indigo-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
+    { id: 8, name: "Educación", icon: "GraduationCap", color: "bg-teal-100 text-teal-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' }
   ];
 
   const paymentMethods: PaymentMethod[] = [
-    { id: 1, name: "Tarjeta de Crédito", icon: "CreditCard" },
-    { id: 2, name: "Tarjeta de Débito", icon: "CreditCard" },
-    { id: 3, name: "Efectivo", icon: "DollarSign" },
-    { id: 4, name: "Transferencia", icon: "Banknote" },
-    { id: 5, name: "PayPal", icon: "CreditCard" },
-    { id: 6, name: "Apple Pay", icon: "Smartphone" }
+    { id: 1, name: "Tarjeta de Crédito", icon: "CreditCard", type: "card" },
+    { id: 2, name: "Tarjeta de Débito", icon: "CreditCard", type: "card" },
+    { id: 3, name: "Efectivo", icon: "DollarSign", type: "cash" },
+    { id: 4, name: "Transferencia", icon: "Banknote", type: "transfer" },
+    { id: 5, name: "PayPal", icon: "CreditCard", type: "digital" },
+    { id: 6, name: "Apple Pay", icon: "Smartphone", type: "digital" }
   ];
 
   const handleInputChange = (field: keyof FormData, value: any): void => {
