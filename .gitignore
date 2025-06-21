@@ -10,6 +10,7 @@ dist/*
 .hooks
 .pages
 *.env
+.env.local
 .next
 package-lock.json
 tsconfig.tsbuildinfo
