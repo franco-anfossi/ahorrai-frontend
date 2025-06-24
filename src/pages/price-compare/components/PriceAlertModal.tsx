@@ -68,7 +68,7 @@ const PriceAlertModal: React.FC<PriceAlertModalProps> = ({ product, onClose }) =
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-medium text-text-primary truncate">{product.name}</h3>
-              <p className="text-sm text-text-secondary">Current lowest: ${lowestPrice.toLocaleString()}</p>
+              <p className="text-sm text-text-secondary">Current lowest: {lowestPrice.toLocaleString('es-ES')}</p>
             </div>
           </div>
 

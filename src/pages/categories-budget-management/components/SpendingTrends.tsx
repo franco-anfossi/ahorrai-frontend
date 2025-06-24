@@ -193,7 +193,7 @@ const SpendingTrends: React.FC<SpendingTrendsProps> = ({ categories }) => {
                   <div>
                     <p className="font-medium text-text-primary">{category.name}</p>
                     <p className="text-sm text-text-secondary">
-                      ${category.spent.toLocaleString()} this month
+                      {category.spent.toLocaleString('es-ES')} this month
                     </p>
                   </div>
                 </div>

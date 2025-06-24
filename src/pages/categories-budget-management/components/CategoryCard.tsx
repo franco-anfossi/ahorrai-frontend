@@ -46,7 +46,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit }) => {
       <div className="mb-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm text-text-secondary">
-            ${category.spent.toLocaleString()} of ${category.budget.toLocaleString()}
+            {category.spent.toLocaleString('es-ES')} of {category.budget.toLocaleString('es-ES')}
           </span>
           <span className={`text-sm font-medium ${
             isOverBudget ? 'text-error' : 'text-text-primary'
@@ -68,7 +68,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit }) => {
           <div className="flex items-center space-x-1 mt-2">
             <Icon name="AlertTriangle" size={14} className="text-error" />
             <span className="text-xs text-error">
-              Over budget by ${(category.spent - category.budget).toLocaleString()}
+              Over budget by {(category.spent - category.budget).toLocaleString('es-ES')}
             </span>
           </div>
         )}
@@ -76,7 +76,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit }) => {
 
       {/* Footer */}
       <div className="flex items-center justify-between text-xs text-text-secondary">
-        <span>Last transaction: {new Date(category.lastTransaction).toLocaleDateString()}</span>
+        <span>Last transaction: {new Date(category.lastTransaction).toLocaleDateString('es-ES')}</span>
         <div className="flex items-center space-x-4">
           <button className="flex items-center space-x-1 hover:text-text-primary spring-transition">
             <Icon name="TrendingUp" size={12} />
