@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Icon from 'components/AppIcon';
+import { createClient } from '@/lib/supabase/component';
 
 import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
@@ -21,6 +22,7 @@ interface Tab {
 
 const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = () => {
   const router = useRouter();
+  const supabase = createClient();
   const [activeTab, setActiveTab] = useState<string>('categories');
   const [showCreateWizard, setShowCreateWizard] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -105,7 +107,8 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     { id: 'categories', label: 'Categorías', icon: 'Tag' },
     { id: 'budget', label: 'Presupuesto', icon: 'DollarSign' },
     { id: 'alerts', label: 'Alertas', icon: 'Bell' },
-    { id: 'trends', label: 'Tendencias', icon: 'TrendingUp' }
+    { id: 'trends', label: 'Tendencias', icon: 'TrendingUp' },
+    { id: 'account', label: 'Cuenta', icon: 'User' }
   ];
 
   const handleSaveChanges = async (): Promise<void> => {
@@ -130,6 +133,14 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   const handleOpenBudgetSlider = (category: Category): void => {
     setSelectedCategory(category);
     setBudgetSliderOpen(true);
+  };
+
+  const handleLogout = async (): Promise<void> => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error);
+    }
+    router.push('/login');
   };
 
   const headerActions = [
@@ -212,7 +223,19 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
             <SpendingTrends categories={categories} />
           </div>
         );
-      
+
+      case 'account':
+        return (
+          <div className="flex justify-center py-10">
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:ring-offset-2"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
+        );
+
       default:
         return null;
     }
