@@ -75,7 +75,7 @@ const BudgetSlider: React.FC<BudgetSliderProps> = ({ isOpen, category, onClose, 
         {/* Current Amount Display */}
         <div className="text-center mb-6">
           <div className="text-3xl font-bold text-text-primary mb-2">
-            ${budgetAmount.toLocaleString()}
+            {budgetAmount.toLocaleString('es-ES')}
           </div>
           <div className="text-sm text-text-secondary">
             {percentageOfIncome}% of monthly income
@@ -98,7 +98,7 @@ const BudgetSlider: React.FC<BudgetSliderProps> = ({ isOpen, category, onClose, 
           />
           <div className="flex justify-between text-xs text-text-secondary mt-2">
             <span>$0</span>
-            <span>${maxBudget.toLocaleString()}</span>
+            <span>{maxBudget.toLocaleString('es-ES')}</span>
           </div>
         </div>
 
@@ -130,18 +130,18 @@ const BudgetSlider: React.FC<BudgetSliderProps> = ({ isOpen, category, onClose, 
           <div className="space-y-1 text-sm text-text-secondary">
             <div className="flex justify-between">
               <span>Current spending:</span>
-              <span>${category.spent.toLocaleString()}</span>
+              <span>{category.spent.toLocaleString('es-ES')}</span>
             </div>
             <div className="flex justify-between">
               <span>Remaining budget:</span>
               <span className={budgetAmount - category.spent >= 0 ? 'text-accent' : 'text-error'}>
-                ${Math.abs(budgetAmount - category.spent).toLocaleString()}
+                {Math.abs(budgetAmount - category.spent).toLocaleString('es-ES')}
                 {budgetAmount - category.spent < 0 && ' over'}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Daily allowance:</span>
-              <span>${Math.round((budgetAmount - category.spent) / 30).toLocaleString()}</span>
+              <span>{Math.round((budgetAmount - category.spent) / 30).toLocaleString('es-ES')}</span>
             </div>
           </div>
         </div>
