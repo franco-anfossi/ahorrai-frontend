@@ -1,18 +1,21 @@
-import type { User } from '@supabase/supabase-js'
 import type { GetServerSidePropsContext } from 'next'
+import type { Profile } from '@/types'
 
 import { createClient } from '@/lib/supabase/server-props'
 
-export default function PrivatePage({ user }: { user: User }) {
-  return <h1>Hello, {user.email || 'user'}!</h1>
+export default function PrivatePage({ profile }: { profile: Profile }) {
+  return <h1>Hello, {profile.full_name || profile.email}!</h1>
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const supabase = createClient(context)
 
-  const { data, error } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
 
-  if (error || !data) {
+  if (error || !user) {
     return {
       redirect: {
         destination: '/',
@@ -21,9 +24,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   }
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
   return {
     props: {
-      user: data.user,
+      profile,
     },
   }
 }
