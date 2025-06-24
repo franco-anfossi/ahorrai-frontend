@@ -38,6 +38,16 @@ export interface Category {
   lastTransaction: string;
 }
 
+// Supabase Category Record
+export interface CategoryRecord {
+  id: string;
+  user_id: string;
+  name: string;
+  icon: string;
+  color: string;
+  created_at: string;
+}
+
 // Payment Method Types
 export interface PaymentMethod {
   id: number;

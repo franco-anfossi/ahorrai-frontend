@@ -9,6 +9,7 @@ A modern financial management application built with Next.js 14, React, and Tail
 - **Manual Expense Registration**: Add expenses manually with detailed categorization
 - **Price Comparison**: Compare prices across different retailers
 - **Budget Management**: Set and track budgets by category
+- **Categories**: Create, view, update and delete spending categories
 - **Expense Details**: Detailed view and editing of individual expenses
 
 ## 🛠 Tech Stack
