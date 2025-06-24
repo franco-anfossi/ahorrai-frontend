@@ -18,17 +18,7 @@ export interface RootState {
 
 // Initial State
 const initialState: AppState = {
-  user: {
-    id: 1,
-    name: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    preferences: {
-      currency: "USD",
-      language: "es",
-      notifications: true
-    }
-  },
+  user: null,
   expenses: [],
   categories: [],
   budgets: [],
