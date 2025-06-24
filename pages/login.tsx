@@ -59,7 +59,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={logIn}
-              className="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              className="w-full bg-secondary-600 text-white py-3 rounded-lg font-medium hover:bg-secondary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:ring-offset-2"
             >
               Iniciar Sesión
             </button>
