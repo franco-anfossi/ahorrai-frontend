@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { NextPage } from 'next';
-import HeaderBar from 'components/ui/HeaderBar';
-import BottomTabNavigation from 'components/ui/BottomTabNavigation';
-import { DashboardData, Transaction, HeaderAction } from '@/types';
+import React, { useState, useMemo } from 'react'
+import { useRouter } from 'next/router'
+import { NextPage } from 'next'
+import HeaderBar from 'components/ui/HeaderBar'
+import BottomTabNavigation from 'components/ui/BottomTabNavigation'
+import { DashboardData, Transaction, HeaderAction } from '@/types'
 
 import ExpenseSummaryCard from './components/ExpenseSummaryCard';
 import SpendingChart from './components/SpendingChart';
@@ -11,114 +11,120 @@ import CategoryBreakdown from './components/CategoryBreakdown';
 import RecentTransactions from './components/RecentTransactions';
 import QuickActionButton from './components/QuickActionButton';
 
-const FinancialDashboard: NextPage = () => {
-  const router = useRouter();
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [currentUser] = useState({
-    name: "Alex Johnson",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-  });
+interface DashboardProps {
+  user: any
+  categories: any[]
+  budgets: any[]
+  expenses: any[]
+}
 
-  // Mock data for dashboard
-  const [dashboardData] = useState<DashboardData>({
-    currentMonth: {
-      spent: 2847.50,
-      budget: 3500.00,
-      remaining: 652.50,
-      percentage: 81.4,
-      currency: "USD",
-      dailyAverage: 149.87,
-      daysLeft: 11
-    },
-    weeklySpending: [
-      { day: "Lun", amount: 450 },
-      { day: "Mar", amount: 320 },
-      { day: "Mié", amount: 680 },
-      { day: "Jue", amount: 420 },
-      { day: "Vie", amount: 890 },
-      { day: "Sáb", amount: 280 },
-      { day: "Dom", amount: 150 }
-    ],
-    categoryBreakdown: [
-      { name: "Comida y Restaurantes", amount: 1245.30, percentage: 43.7, color: "#EF4444", icon: "UtensilsCrossed" },
-      { name: "Transporte", amount: 567.80, percentage: 19.9, color: "#3B82F6", icon: "Car" },
-      { name: "Compras", amount: 423.90, percentage: 14.9, color: "#10B981", icon: "ShoppingBag" },
-      { name: "Entretenimiento", amount: 312.50, percentage: 11.0, color: "#F59E0B", icon: "Film" },
-      { name: "Servicios", amount: 298.00, percentage: 10.5, color: "#8B5CF6", icon: "Zap" }
-    ],
-    recentTransactions: [
-      {
-        id: 1,
-        merchant: "Starbucks Coffee",
-        amount: 12.45,
-        category: "Comida y Restaurantes",
-        status: "completed",
-        time: "2h ago",
-        description: "Café de la mañana y pastel",
-        icon: "Coffee"
-      },
-      {
-        id: 2,
-        merchant: "Uber Ride",
-        amount: 18.75,
-        category: "Transporte",
-        status: "completed",
-        time: "5h ago",
-        description: "Viaje a la oficina del centro",
-        icon: "Car"
-      },
-      {
-        id: 3,
-        merchant: "Amazon Purchase",
-        amount: 89.99,
-        category: "Compras",
-        status: "pending",
-        time: "Ayer",
-        description: "Auriculares inalámbricos",
-        icon: "Package"
-      },
-      {
-        id: 4,
-        merchant: "Netflix Subscription",
-        amount: 15.99,
-        category: "Entretenimiento",
-        status: "completed",
-        time: "17 Jun",
-        description: "Servicio de streaming mensual",
-        icon: "Film"
-      },
-      {
-        id: 5,
-        merchant: "Whole Foods Market",
-        amount: 127.83,
-        category: "Comida y Restaurantes",
-        status: "completed",
-        time: "16 Jun",
-        description: "Compras semanales de comestibles",
-        icon: "ShoppingCart"
-      },
-      {
-        id: 6,
-        merchant: "Shell Gas Station",
-        amount: 45.20,
-        category: "Transporte",
-        status: "completed",
-        time: "15 Jun",
-        description: "Llenado de gasolina",
-        icon: "Fuel"
-      },
-      {
-        id: 7,
-        merchant: "Movie Theater",
-        amount: 32.50,
-        category: "Entretenimiento",
-        status: "completed",
-        time: "14 Jun",
-        description: "Entradas de cine del fin de semana",
-        icon: "Film"
+const FinancialDashboard: NextPage<DashboardProps> = ({
+  user,
+  categories,
+  budgets,
+  expenses,
+}) => {
+  const router = useRouter()
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
+  const currentUser = {
+    name: user?.full_name || user?.email || 'User',
+    avatar:
+      user?.avatar_url ||
+      'https://www.gravatar.com/avatar/?d=identicon&s=64',
+  }
+
+  const dashboardData: DashboardData = useMemo(() => {
+    const today = new Date()
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+
+    const monthExpenses = expenses.filter((e) => new Date(e.date) >= monthStart)
+    const spent = monthExpenses.reduce((sum, e) => sum + Number(e.amount), 0)
+
+    const activeBudgets = budgets.filter((b) => {
+      const start = new Date(b.start_date)
+      const end = new Date(b.end_date)
+      return start <= today && today <= end
+    })
+    const budgetTotal = activeBudgets.reduce((sum, b) => sum + Number(b.amount), 0)
+    const remaining = budgetTotal - spent
+    const percentage = budgetTotal > 0 ? (spent / budgetTotal) * 100 : 0
+
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+    const dailyAverage = spent / (today.getDate() || 1)
+    const daysLeft = daysInMonth - today.getDate()
+
+    // Weekly spending (Mon-Sun)
+    const weeklyStart = new Date(today)
+    weeklyStart.setDate(today.getDate() - 6)
+    const weekAmounts = Array(7).fill(0)
+    monthExpenses.forEach((e) => {
+      const d = new Date(e.date)
+      if (d >= weeklyStart && d <= today) {
+        const idx = (d.getDay() + 6) % 7
+        weekAmounts[idx] += Number(e.amount)
       }
-    ]
-  });
+    })
+    const dayLabels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+    const weeklySpending = weekAmounts.map((amount, i) => ({
+      day: dayLabels[i],
+      amount,
+    }))
+
+    // Category breakdown
+    const byCategory: Record<string, { name: string; amount: number; color: string; icon: string }> = {}
+    monthExpenses.forEach((e) => {
+      const cat = categories.find((c) => c.id === e.category_id)
+      if (cat) {
+        if (!byCategory[cat.id]) {
+          byCategory[cat.id] = {
+            name: cat.name,
+            amount: 0,
+            color: cat.color,
+            icon: cat.icon,
+          }
+        }
+        byCategory[cat.id].amount += Number(e.amount)
+      }
+    })
+    const totalCategoryAmount = Object.values(byCategory).reduce((sum, c) => sum + c.amount, 0)
+    const categoryBreakdown = Object.values(byCategory).map((c) => ({
+      ...c,
+      percentage: totalCategoryAmount > 0 ? (c.amount / totalCategoryAmount) * 100 : 0,
+    }))
+
+    // Recent transactions
+    const recentTransactions: Transaction[] = expenses
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 7)
+      .map((e) => {
+        const cat = categories.find((c) => c.id === e.category_id)
+        return {
+          id: e.id,
+          merchant: e.merchant || '',
+          amount: Number(e.amount),
+          category: cat?.name || '',
+          status: 'completed',
+          time: e.date,
+          description: e.description || '',
+          icon: cat?.icon || 'Circle',
+        }
+      })
+
+    return {
+      currentMonth: {
+        spent,
+        budget: budgetTotal,
+        remaining,
+        percentage,
+        currency: 'USD',
+        dailyAverage,
+        daysLeft,
+      },
+      weeklySpending,
+      categoryBreakdown,
+      recentTransactions,
+    }
+  }, [expenses, budgets, categories])
 
   const handlePullToRefresh = async (): Promise<void> => {
     setIsRefreshing(true);
