@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import Icon from 'components/AppIcon';
-import { createClient } from '@/lib/supabase/component';
 
 import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
@@ -10,6 +8,7 @@ import BudgetSlider from './components/BudgetSlider';
 import AlertSettings from './components/AlertSettings';
 import CategoryCreationWizard from './components/CategoryCreationWizard';
 import SpendingTrends from './components/SpendingTrends';
+import AccountSection from './components/AccountSection';
 import { Category } from '../../types';
 
 interface CategoriesBudgetManagementProps {}
@@ -21,8 +20,6 @@ interface Tab {
 }
 
 const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = () => {
-  const router = useRouter();
-  const supabase = createClient();
   const [activeTab, setActiveTab] = useState<string>('categories');
   const [showCreateWizard, setShowCreateWizard] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -135,13 +132,6 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     setBudgetSliderOpen(true);
   };
 
-  const handleLogout = async (): Promise<void> => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error);
-    }
-    router.push('/login');
-  };
 
   const headerActions = [
     {
@@ -225,16 +215,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
         );
 
       case 'account':
-        return (
-          <div className="flex justify-center py-10">
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-secondary-600 focus:ring-offset-2"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
-        );
+        return <AccountSection />;
 
       default:
         return null;
