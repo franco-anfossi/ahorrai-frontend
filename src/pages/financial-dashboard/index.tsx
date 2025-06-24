@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
-import { DashboardData, Transaction, HeaderAction } from '@/types';
+import { DashboardData, Transaction, HeaderAction, Profile } from '@/types';
+import { createClient } from '@/lib/supabase/component';
 
 import ExpenseSummaryCard from './components/ExpenseSummaryCard';
 import SpendingChart from './components/SpendingChart';
@@ -14,10 +15,25 @@ import QuickActionButton from './components/QuickActionButton';
 const FinancialDashboard: NextPage = () => {
   const router = useRouter();
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [currentUser] = useState({
-    name: "Alex Johnson",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-  });
+  const [currentUser, setCurrentUser] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const fetchProfile = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setCurrentUser(profile);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   // Mock data for dashboard
   const [dashboardData] = useState<DashboardData>({
@@ -169,15 +185,19 @@ const FinancialDashboard: NextPage = () => {
       <div className="px-4 py-4 bg-gradient-to-r from-primary-50 to-secondary-50 border-b border-border">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full overflow-hidden">
-            <img 
-              src={currentUser.avatar} 
-              alt={currentUser.name} 
-              className="w-full h-full object-cover"
-            />
+            {currentUser && (
+              <img
+                src={currentUser.avatar_url ?? ''}
+                alt={currentUser.full_name ?? currentUser.email}
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
           <div>
             <p className="text-sm text-text-secondary">Bienvenido de vuelta,</p>
-            <p className="text-lg font-semibold text-text-primary">{currentUser.name}</p>
+            <p className="text-lg font-semibold text-text-primary">
+              {currentUser?.full_name || currentUser?.email}
+            </p>
           </div>
         </div>
       </div>
