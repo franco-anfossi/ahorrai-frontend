@@ -34,26 +34,31 @@ const AccountSection: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
     setSaving(true);
-    const filePath = `${profile.id}/${file.name}`;
-    const { error } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, file, { upsert: true });
-    if (!error) {
-      const { data: urlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-      const avatar_url = urlData.publicUrl;
-      const { data: updated, error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url })
-        .eq('id', profile.id)
-        .select()
-        .single();
-      if (!updateError && updated) {
-        setProfile(updated as Profile);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('userId', profile.id);
+    try {
+      const response = await fetch('/api/upload-avatar', {
+        method: 'POST',
+        body: formData,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const avatar_url = data.url as string;
+        const { data: updated, error } = await supabase
+          .from('profiles')
+          .update({ avatar_url })
+          .eq('id', profile.id)
+          .select()
+          .single();
+        if (!error && updated) {
+          setProfile(updated as Profile);
+        }
+      } else {
+        console.error('Error uploading avatar');
       }
-    } else {
-      console.error('Error uploading avatar:', error);
+    } catch (err) {
+      console.error(err);
     }
     setSaving(false);
   };
@@ -88,16 +93,25 @@ const AccountSection: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-md mx-auto">
+    <div className="max-w-md mx-auto bg-surface border border-border rounded-lg p-6 space-y-6 shadow-sm">
       <div className="flex flex-col items-center space-y-3">
-        {profile?.avatar_url && (
+        {profile?.avatar_url ? (
           <img
             src={profile.avatar_url}
             alt="Avatar"
-            className="w-24 h-24 rounded-full object-cover"
+            className="w-24 h-24 rounded-full object-cover border border-border"
           />
+        ) : (
+          <div className="w-24 h-24 rounded-full bg-gray-200 border border-border flex items-center justify-center text-sm text-text-secondary">
+            Sin Foto
+          </div>
         )}
-        <input type="file" accept="image/*" onChange={handleAvatarChange} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+          className="text-sm"
+        />
       </div>
       <div>
         <label className="block text-sm font-medium text-text-primary mb-2">
