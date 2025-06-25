@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
-import { Category } from '../../../types';
+import { CategoryInput, CategoryRecord } from '@/lib/supabase/categories';
 
 interface CategoryCreationWizardProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateCategory: (category: Category) => void;
+  initialData?: CategoryRecord;
+  onSave: (category: CategoryInput) => void;
 }
 
 interface CategoryData {
@@ -16,15 +17,26 @@ interface CategoryData {
   description: string;
 }
 
-const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen, onClose, onCreateCategory }) => {
+const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen, onClose, initialData, onSave }) => {
   const [step, setStep] = useState<number>(1);
   const [categoryData, setCategoryData] = useState<CategoryData>({
-    name: '',
-    icon: 'Package',
-    color: '#3B82F6',
+    name: initialData?.name || '',
+    icon: initialData?.icon || 'Package',
+    color: initialData?.color || '#3B82F6',
     budget: 500,
     description: ''
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setCategoryData((prev) => ({
+        ...prev,
+        name: initialData.name,
+        icon: initialData.icon,
+        color: initialData.color,
+      }));
+    }
+  }, [initialData]);
 
   const availableIcons: string[] = [
     'UtensilsCrossed', 'Car', 'Film', 'ShoppingBag', 'Heart', 'Zap',
@@ -67,19 +79,9 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
     }
   };
 
-  const handleCreate = (): void => {
-    const newCategory: Category = {
-      ...categoryData,
-      id: Date.now(),
-      spent: 0,
-      percentage: 0,
-      trend: 'stable',
-      trendValue: 0,
-      isOverBudget: false,
-      transactions: 0,
-      lastTransaction: new Date().toISOString()
-    };
-    onCreateCategory(newCategory);
+  const handleSave = (): void => {
+    const { name, icon, color } = categoryData;
+    onSave({ name, icon, color });
   };
 
   const getRecommendedBudget = (): number => {
@@ -99,9 +101,11 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
         <div className="flex items-center justify-between p-4 border-b border-border">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center">
-              <Icon name="Plus" size={16} className="text-primary" />
+              <Icon name={initialData ? 'Pencil' : 'Plus'} size={16} className="text-primary" />
             </div>
-            <h2 className="text-lg font-semibold text-text-primary">Create Category</h2>
+            <h2 className="text-lg font-semibold text-text-primary">
+              {initialData ? 'Edit Category' : 'Create Category'}
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -300,11 +304,11 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
               </button>
             ) : (
               <button
-                onClick={handleCreate}
+                onClick={handleSave}
                 disabled={!categoryData.name.trim() || categoryData.budget <= 0}
                 className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create Category
+                {initialData ? 'Save Changes' : 'Create Category'}
               </button>
             )}
           </div>
