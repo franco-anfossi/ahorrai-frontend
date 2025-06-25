@@ -179,18 +179,50 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     setBudgetSliderOpen(true);
   };
 
-  const getCategoryProgress = (categoryId: string): number => {
-    const budget = budgets.find(b => b.category_id === categoryId);
-    if (!budget) return 0;
-    const spent = expenses
-      .filter(e => e.category_id === categoryId &&
-        new Date(e.date) >= new Date(budget.start_date) &&
-        new Date(e.date) <= new Date(budget.end_date))
+  const getCategoryStats = (categoryId: string) => {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const prevMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+    const catExpenses = expenses.filter(
+      (e) =>
+        e.category_id === categoryId &&
+        new Date(e.date) >= monthStart &&
+        new Date(e.date) <= monthEnd,
+    );
+    const amount = catExpenses.reduce((sum, e) => sum + e.amount, 0);
+    const transactions = catExpenses.length;
+    const average = transactions ? amount / transactions : null;
+
+    const lastMonthAmount = expenses
+      .filter(
+        (e) =>
+          e.category_id === categoryId &&
+          new Date(e.date) >= prevMonthStart &&
+          new Date(e.date) <= prevMonthEnd,
+      )
       .reduce((sum, e) => sum + e.amount, 0);
-    if (!budget.amount) return 0;
-    const percentage = (spent / budget.amount) * 100;
-    if (isNaN(percentage) || !isFinite(percentage)) return 0;
-    return percentage;
+
+    const vsLastMonth =
+      lastMonthAmount > 0 ? ((amount - lastMonthAmount) / lastMonthAmount) * 100 : null;
+
+    const budgetRecord = budgets.find(
+      (b) =>
+        b.category_id === categoryId &&
+        new Date(b.start_date) <= monthEnd &&
+        new Date(b.end_date) >= monthStart,
+    );
+
+    return {
+      amount,
+      transactions: transactions || null,
+      average,
+      vsLastMonth,
+      budget: budgetRecord ? budgetRecord.amount : null,
+      progress: budgetRecord && budgetRecord.amount ? (amount / budgetRecord.amount) * 100 : 0,
+    };
   };
 
 
@@ -214,18 +246,26 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
             </div>
             
             <div className="grid grid-cols-1 gap-4">
-              {categories.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  progress={getCategoryProgress(category.id)}
-                  onEdit={() => {
-                    setEditingCategory(category);
-                    setShowCreateWizard(true);
-                  }}
-                  onDelete={() => handleDeleteCategory(category)}
-                />
-              ))}
+              {categories.map((category) => {
+                const stats = getCategoryStats(category.id);
+                return (
+                  <CategoryCard
+                    key={category.id}
+                    category={category}
+                    progress={stats.progress}
+                    amount={stats.amount}
+                    transactions={stats.transactions}
+                    average={stats.average}
+                    vsLastMonth={stats.vsLastMonth}
+                    budget={stats.budget}
+                    onEdit={() => {
+                      setEditingCategory(category);
+                      setShowCreateWizard(true);
+                    }}
+                    onDelete={() => handleDeleteCategory(category)}
+                  />
+                );
+              })}
             </div>
           </div>
         );
