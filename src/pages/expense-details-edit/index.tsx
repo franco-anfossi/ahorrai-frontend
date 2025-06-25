@@ -10,7 +10,11 @@ import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import SplitExpenseModal from './components/SplitExpenseModal';
 import ShareExpenseModal from './components/ShareExpenseModal';
 import HeaderBar from 'components/ui/HeaderBar';
+import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import { Expense } from '../../types';
+import { createClient } from '@/lib/supabase/component';
+import { fetchExpense } from '@/lib/supabase/expenses';
+import { fetchCategoryById, CategoryRecord } from '@/lib/supabase/categories';
 
 interface ExpenseDetailsEditProps {}
 
@@ -24,224 +28,37 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
   const [showActivityLog, setShowActivityLog] = useState<boolean>(false);
   const [expenseData, setExpenseData] = useState<Expense | null>(null);
 
-  // Mock expense data that matches dashboard transactions
-  const mockExpenseDataMap: Record<number, Expense> = {
-    1: {
-      id: 1,
-      amount: 12.45,
-      currency: "USD",
-      category: {
-        id: 1,
-        name: "Comida y Restaurantes",
-        icon: "Coffee",
-        color: "#EF4444"
-      },
-      merchant: "Starbucks Coffee",
-      date: "2024-01-15T19:30:00Z",
-      paymentMethod: "Tarjeta de Crédito",
-      cardLast4: "4532",
-      description: "Café de la mañana y pastel",
-      tags: ["café", "desayuno", "mañana"],
-      location: {
-        address: "Centro Comercial Plaza Mayor",
-        coordinates: { lat: 40.7128, lng: -74.0060 }
-      },
-      receiptImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=600&fit=crop",
-      notes: "Café americano grande y pastel de chocolate. El café estaba perfecto y el pastel muy fresco.",
-      status: "completed",
-      activityLog: [
-        {
-          id: "log_001",
-          action: "created",
-          timestamp: "2024-01-15T19:45:00Z",
-          details: "Gasto creado mediante escaneo de recibo"
-        },
-        {
-          id: "log_002",
-          action: "edited",
-          timestamp: "2024-01-15T20:15:00Z",
-          details: "Agregadas notas y etiquetas"
-        }
-      ]
-    },
-    2: {
-      id: 2,
-      amount: 18.75,
-      currency: "USD",
-      category: {
-        id: 2,
-        name: "Transporte",
-        icon: "Car",
-        color: "#3B82F6"
-      },
-      merchant: "Uber Ride",
-      date: "2024-01-15T14:30:00Z",
-      paymentMethod: "Tarjeta de Débito",
-      cardLast4: "1234",
-      description: "Viaje a la oficina del centro",
-      tags: ["transporte", "trabajo", "oficina"],
-      location: {
-        address: "Centro de la ciudad",
-        coordinates: { lat: 40.7128, lng: -74.0060 }
-      },
-      receiptImage: null,
-      notes: "Viaje en Uber desde casa hasta la oficina. El conductor fue muy amable y el viaje fue rápido.",
-      status: "completed",
-      activityLog: [
-        {
-          id: "log_001",
-          action: "created",
-          timestamp: "2024-01-15T14:45:00Z",
-          details: "Gasto creado automáticamente desde Uber"
-        }
-      ]
-    },
-    3: {
-      id: 3,
-      amount: 89.99,
-      currency: "USD",
-      category: {
-        id: 3,
-        name: "Compras",
-        icon: "Package",
-        color: "#10B981"
-      },
-      merchant: "Amazon Purchase",
-      date: "2024-01-14T10:30:00Z",
-      paymentMethod: "Tarjeta de Crédito",
-      cardLast4: "5678",
-      description: "Auriculares inalámbricos",
-      tags: ["tecnología", "audio", "compras online"],
-      location: {
-        address: "Compra online",
-        coordinates: null
-      },
-      receiptImage: null,
-      notes: "Auriculares Sony WH-1000XM4. Excelente calidad de sonido y cancelación de ruido.",
-      status: "pending",
-      activityLog: [
-        {
-          id: "log_001",
-          action: "created",
-          timestamp: "2024-01-14T10:45:00Z",
-          details: "Gasto creado desde Amazon"
-        },
-        {
-          id: "log_002",
-          action: "status_changed",
-          timestamp: "2024-01-14T11:00:00Z",
-          details: "Estado cambiado a pendiente"
-        }
-      ]
-    },
-    4: {
-      id: 4,
-      amount: 15.99,
-      currency: "USD",
-      category: {
-        id: 4,
-        name: "Entretenimiento",
-        icon: "Film",
-        color: "#F59E0B"
-      },
-      merchant: "Netflix Subscription",
-      date: "2024-01-13T00:00:00Z",
-      paymentMethod: "Tarjeta de Crédito",
-      cardLast4: "9012",
-      description: "Servicio de streaming mensual",
-      tags: ["entretenimiento", "streaming", "suscripción"],
-      location: {
-        address: "Servicio online",
-        coordinates: null
-      },
-      receiptImage: null,
-      notes: "Suscripción mensual de Netflix. Plan estándar con 2 pantallas.",
-      status: "completed",
-      activityLog: [
-        {
-          id: "log_001",
-          action: "created",
-          timestamp: "2024-01-13T00:05:00Z",
-          details: "Cargo automático mensual"
-        }
-      ]
-    },
-    5: {
-      id: 5,
-      amount: 127.83,
-      currency: "USD",
-      category: {
-        id: 1,
-        name: "Comida y Restaurantes",
-        icon: "ShoppingCart",
-        color: "#EF4444"
-      },
-      merchant: "Whole Foods Market",
-      date: "2024-01-12T16:30:00Z",
-      paymentMethod: "Tarjeta de Débito",
-      cardLast4: "3456",
-      description: "Compras semanales de comestibles",
-      tags: ["comida", "comestibles", "semanal"],
-      location: {
-        address: "Whole Foods Market - Downtown",
-        coordinates: { lat: 40.7128, lng: -74.0060 }
-      },
-      receiptImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=600&fit=crop",
-      notes: "Compras semanales incluyendo frutas, verduras, carnes y productos orgánicos.",
-      status: "completed",
-      activityLog: [
-        {
-          id: "log_001",
-          action: "created",
-          timestamp: "2024-01-12T16:45:00Z",
-          details: "Gasto creado mediante escaneo de recibo"
-        }
-      ]
-    },
-    6: {
-      id: 6,
-      amount: 45.20,
-      currency: "USD",
-      category: {
-        id: 5,
-        name: "Salud y Bienestar",
-        icon: "Heart",
-        color: "#EC4899"
-      },
-      merchant: "CVS Pharmacy",
-      date: "2024-01-11T12:00:00Z",
-      paymentMethod: "Efectivo",
-      cardLast4: null,
-      description: "Medicamentos y productos de cuidado personal",
-      tags: ["salud", "medicamentos", "farmacia"],
-      location: {
-        address: "CVS Pharmacy - Main Street",
-        coordinates: { lat: 40.7128, lng: -74.0060 }
-      },
-      receiptImage: null,
-      notes: "Compra de medicamentos recetados y productos de cuidado personal.",
-      status: "completed",
-      activityLog: [
-        {
-          id: "log_001",
-          action: "created",
-          timestamp: "2024-01-11T12:15:00Z",
-          details: "Gasto registrado manualmente"
-        }
-      ]
-    }
-  };
-
   useEffect(() => {
-    const loadExpenseData = () => {
+    const loadExpenseData = async () => {
       const { id } = router.query;
       if (id && typeof id === 'string') {
-        const expenseId = parseInt(id);
-        const data = mockExpenseDataMap[expenseId];
-        if (data) {
-          setExpenseData(data);
-        } else {
-          // Handle expense not found
+        try {
+          const record = await fetchExpense(id);
+          if (!record) {
+            router.push('/financial-dashboard');
+            return;
+          }
+          const category: CategoryRecord | null = record.category_id
+            ? await fetchCategoryById(record.category_id)
+            : null;
+          const expense: Expense = {
+            id: record.id,
+            amount: record.amount,
+            currency: 'CLP',
+            category: category
+              ? { id: category.id as unknown as number, name: category.name, icon: category.icon, color: category.color }
+              : { id: 0, name: 'Sin categoría', icon: 'Tag', color: '#ccc' },
+            merchant: record.merchant || '',
+            date: record.date,
+            paymentMethod: record.payment_method || '',
+            cardLast4: null,
+            description: record.description || '',
+            notes: record.description || '',
+            status: 'completed'
+          };
+          setExpenseData(expense);
+        } catch (e) {
+          console.error(e);
           router.push('/financial-dashboard');
         }
       }
@@ -469,6 +286,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         onSave={handleSaveEdit}
         isSaving={isSaving}
       />
+
+      <BottomTabNavigation />
     </div>
   );
 };

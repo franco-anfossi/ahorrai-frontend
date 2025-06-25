@@ -97,7 +97,7 @@ export interface Transaction {
 
 // Expense Types
 export interface Expense {
-  id: number;
+  id: string;
   amount: number;
   currency: string;
   category: {
