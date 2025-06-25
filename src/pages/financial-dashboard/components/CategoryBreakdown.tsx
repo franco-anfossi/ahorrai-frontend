@@ -61,7 +61,10 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
       {/* Category List */}
       <div className="space-y-4">
         {data.map((category, index) => {
-          const pct = category.percentage <= 1 ? category.percentage * 100 : category.percentage;
+          console.log(category)
+          if (category.budget !== 0 && category.budget !== undefined && category.budget !== null) {
+            category.percentage = (category.amount / category.budget) * 100;
+          }
           return (
             <CategoryCard
               key={index}
@@ -72,7 +75,7 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
                 color: category.color,
                 description: '',
               }}
-              progress={pct}
+              progress={category.percentage}
               amount={category.amount}
               transactions={category.transactions}
               average={category.average}
