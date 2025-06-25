@@ -6,7 +6,7 @@ interface CategoryCreationWizardProps {
   isOpen: boolean;
   onClose: () => void;
   initialData?: CategoryRecord;
-  onSave: (category: CategoryInput) => void;
+  onSave: (category: CategoryInput, budget: number) => void;
 }
 
 interface CategoryData {
@@ -92,8 +92,8 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
   };
 
   const handleSave = (): void => {
-    const { name, icon, color } = categoryData;
-    onSave({ name, icon, color });
+    const { name, icon, color, budget } = categoryData;
+    onSave({ name, icon, color }, budget);
   };
 
   const getRecommendedBudget = (): number => {
