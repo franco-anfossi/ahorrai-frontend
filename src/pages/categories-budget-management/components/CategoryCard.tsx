@@ -4,11 +4,12 @@ import { CategoryRecord } from '@/lib/supabase/categories';
 
 interface CategoryCardProps {
   category: CategoryRecord;
+  progress?: number;
   onEdit: () => void;
   onDelete?: () => void;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, onDelete }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ category, progress = 0, onEdit, onDelete }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -48,6 +49,18 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, onDelete 
               )}
             </div>
           )}
+        </div>
+      </div>
+      <div className="mt-3">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-xs text-text-secondary">Gasto</span>
+          <span className={`text-xs font-medium ${progress >= 100 ? 'text-error' : 'text-text-primary'}`}>{Math.round(progress)}%</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${progress >= 100 ? 'bg-gradient-to-r from-error to-red-500' : progress > 80 ? 'bg-gradient-to-r from-warning to-orange-500' : 'bg-gradient-to-r from-success to-emerald-500'}`}
+            style={{ width: `${Math.min(progress, 100)}%` }}
+          />
         </div>
       </div>
       {menuOpen && <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />}

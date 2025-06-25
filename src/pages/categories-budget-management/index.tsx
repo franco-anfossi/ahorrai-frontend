@@ -13,6 +13,7 @@ import SpendingTrends from './components/SpendingTrends';
 import AccountSection from './components/AccountSection';
 import { CategoryInput, CategoryRecord, fetchCategories, createCategory, updateCategory, deleteCategory } from '@/lib/supabase/categories';
 import { BudgetInput, BudgetRecord, fetchBudgets, createBudget, updateBudget, deleteBudget } from '@/lib/supabase/budgets';
+import { ExpenseRecord, fetchExpenses } from '@/lib/supabase/expenses';
 import { createClient } from '@/lib/supabase/component';
 
 interface CategoriesBudgetManagementProps {}
@@ -32,6 +33,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   const [selectedCategory, setSelectedCategory] = useState<CategoryRecord | null>(null);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
   const [budgets, setBudgets] = useState<BudgetRecord[]>([]);
+  const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
   const [editingBudget, setEditingBudget] = useState<BudgetRecord | null>(null);
   const supabase = createClient();
@@ -45,6 +47,8 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
           setCategories(cats);
           const buds = await fetchBudgets(user.id);
           setBudgets(buds);
+          const exps = await fetchExpenses(user.id);
+          setExpenses(exps);
         } catch (err) {
           console.error(err);
         }
@@ -175,6 +179,20 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     setBudgetSliderOpen(true);
   };
 
+  const getCategoryProgress = (categoryId: string): number => {
+    const budget = budgets.find(b => b.category_id === categoryId);
+    if (!budget) return 0;
+    const spent = expenses
+      .filter(e => e.category_id === categoryId &&
+        new Date(e.date) >= new Date(budget.start_date) &&
+        new Date(e.date) <= new Date(budget.end_date))
+      .reduce((sum, e) => sum + e.amount, 0);
+    if (!budget.amount) return 0;
+    const percentage = (spent / budget.amount) * 100;
+    if (isNaN(percentage) || !isFinite(percentage)) return 0;
+    return percentage;
+  };
+
 
 
   const renderTabContent = (): React.ReactNode | null => {
@@ -200,6 +218,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                 <CategoryCard
                   key={category.id}
                   category={category}
+                  progress={getCategoryProgress(category.id)}
                   onEdit={() => {
                     setEditingCategory(category);
                     setShowCreateWizard(true);
