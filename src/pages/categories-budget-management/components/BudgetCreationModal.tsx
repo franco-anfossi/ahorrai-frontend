@@ -32,11 +32,26 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
         setAmount(0)
         const today = new Date().toISOString().split('T')[0]
         setStartDate(today)
-        setEndDate(today)
+        const end = new Date(today)
+        end.setMonth(end.getMonth() + 1)
+        setEndDate(end.toISOString().split('T')[0])
         setPeriod('mensual')
       }
     }
   }, [isOpen, categories, initialData])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const start = new Date(startDate)
+    if (isNaN(start.getTime())) return
+    const end = new Date(start)
+    if (period === 'mensual') {
+      end.setMonth(end.getMonth() + 1)
+    } else {
+      end.setFullYear(end.getFullYear() + 1)
+    }
+    setEndDate(end.toISOString().split('T')[0])
+  }, [startDate, period, isOpen])
 
   if (!isOpen) return null
 
@@ -112,8 +127,8 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              readOnly
+              className="w-full px-3 py-2 border border-border rounded-lg bg-gray-100 focus:outline-none"
             />
           </div>
         </div>
