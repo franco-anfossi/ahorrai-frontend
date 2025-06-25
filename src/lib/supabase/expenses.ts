@@ -70,3 +70,17 @@ export async function deleteExpense(id: string): Promise<void> {
     throw error
   }
 }
+
+export async function fetchExpense(id: string): Promise<ExpenseRecord | null> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('expenses')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    throw error
+  }
+  return data as ExpenseRecord
+}
