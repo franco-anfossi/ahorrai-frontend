@@ -42,7 +42,7 @@ interface UpdateExpenseAction {
 
 interface DeleteExpenseAction {
   type: typeof DELETE_EXPENSE;
-  payload: number;
+  payload: string;
 }
 
 interface SetCategoriesAction {
@@ -80,7 +80,7 @@ export const addExpense = (expense: Omit<Expense, 'id' | 'createdAt'>): AddExpen
   type: ADD_EXPENSE,
   payload: {
     ...expense,
-    id: Date.now(),
+    id: Date.now().toString(),
     createdAt: new Date().toISOString()
   } as Expense
 });
@@ -93,7 +93,7 @@ export const updateExpense = (expense: Expense): UpdateExpenseAction => ({
   }
 });
 
-export const deleteExpense = (expenseId: number): DeleteExpenseAction => ({
+export const deleteExpense = (expenseId: string): DeleteExpenseAction => ({
   type: DELETE_EXPENSE,
   payload: expenseId
 });

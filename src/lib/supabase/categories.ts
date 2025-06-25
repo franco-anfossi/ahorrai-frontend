@@ -67,3 +67,17 @@ export async function deleteCategory(id: string): Promise<void> {
     throw error
   }
 }
+
+export async function fetchCategoryById(id: string): Promise<CategoryRecord | null> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    throw error
+  }
+  return data as CategoryRecord
+}
