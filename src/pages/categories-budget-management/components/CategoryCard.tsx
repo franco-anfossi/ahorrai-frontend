@@ -36,14 +36,14 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, onDelete 
                 onClick={() => { setMenuOpen(false); onEdit(); }}
                 className="w-full text-left px-4 py-2 hover:bg-surface-hover spring-transition"
               >
-                Edit
+                Editar
               </button>
               {onDelete && (
                 <button
                   onClick={() => { setMenuOpen(false); onDelete(); }}
                   className="w-full text-left px-4 py-2 text-error hover:bg-error-50 spring-transition"
                 >
-                  Delete
+                  Eliminar
                 </button>
               )}
             </div>
