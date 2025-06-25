@@ -5,11 +5,13 @@ import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import CategoryCard from './components/CategoryCard';
 import BudgetSlider from './components/BudgetSlider';
+import BudgetCreationModal from './components/BudgetCreationModal';
 import AlertSettings from './components/AlertSettings';
 import CategoryCreationWizard from './components/CategoryCreationWizard';
 import SpendingTrends from './components/SpendingTrends';
 import AccountSection from './components/AccountSection';
 import { CategoryInput, CategoryRecord, fetchCategories, createCategory, updateCategory, deleteCategory } from '@/lib/supabase/categories';
+import { BudgetInput, BudgetRecord, fetchBudgets, createBudget } from '@/lib/supabase/budgets';
 import { createClient } from '@/lib/supabase/component';
 
 interface CategoriesBudgetManagementProps {}
@@ -28,6 +30,8 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   const [budgetSliderOpen, setBudgetSliderOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryRecord | null>(null);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
+  const [budgets, setBudgets] = useState<BudgetRecord[]>([]);
+  const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -35,8 +39,10 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         try {
-          const result = await fetchCategories(user.id);
-          setCategories(result);
+          const cats = await fetchCategories(user.id);
+          setCategories(cats);
+          const buds = await fetchBudgets(user.id);
+          setBudgets(buds);
         } catch (err) {
           console.error(err);
         }
@@ -93,6 +99,19 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
       setCategories((prev) => prev.filter((c) => c.id !== category.id));
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleCreateBudget = async (data: BudgetInput): Promise<void> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    try {
+      const created = await createBudget(user.id, data);
+      setBudgets((prev) => [...prev, created]);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setShowBudgetModal(false);
     }
   };
 
@@ -166,11 +185,24 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                 Configuración de Presupuesto
               </h3>
               <button
-                onClick={() => handleOpenBudgetSlider(categories[0])}
+                onClick={() => setShowBudgetModal(true)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition"
               >
-                Configurar Presupuesto
+                Agregar Presupuesto
               </button>
+              {budgets.length > 0 && (
+                <div className="mt-4 space-y-3">
+                  {budgets.map((b) => {
+                    const cat = categories.find(c => c.id === b.category_id);
+                    return (
+                      <div key={b.id} className="p-3 bg-surface rounded-lg border border-border flex justify-between">
+                        <span>{cat?.name || 'Categoría'}</span>
+                        <span>{b.amount}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -266,6 +298,13 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
         category={selectedCategory}
         onClose={() => setBudgetSliderOpen(false)}
         onUpdateBudget={handleUpdateBudget}
+      />
+
+      <BudgetCreationModal
+        isOpen={showBudgetModal}
+        categories={categories}
+        onClose={() => setShowBudgetModal(false)}
+        onSave={handleCreateBudget}
       />
     </div>
   );
