@@ -83,7 +83,7 @@ export interface RootState {
 
 // Transaction Types
 export interface Transaction {
-  id: number;
+  id: string;
   merchant: string;
   amount: number;
   category: string;
@@ -145,6 +145,7 @@ export interface DashboardData {
     daysLeft: number;
   };
   weeklySpending: WeeklySpending[];
+  monthlySpending: MonthlySpending[];
   categoryBreakdown: CategoryBreakdown[];
   recentTransactions: Transaction[];
 }
@@ -154,12 +155,21 @@ export interface WeeklySpending {
   amount: number;
 }
 
+export interface MonthlySpending {
+  label: string;
+  amount: number;
+}
+
 export interface CategoryBreakdown {
   name: string;
   amount: number;
   percentage: number;
   color: string;
   icon: string;
+  transactions?: number | null;
+  average?: number | null;
+  vsLastMonth?: number | null;
+  budget?: number | null;
 }
 
 // Product Types
@@ -211,6 +221,7 @@ export interface RecentTransactionsProps {
   transactions: Transaction[];
   currency: string;
   onTransactionClick: (transaction: Transaction) => void;
+  onDeleteTransaction: (id: string) => void;
 }
 
 export interface ExpenseSummaryCardProps {

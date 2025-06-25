@@ -3,12 +3,13 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, TooltipProps
 import Icon from 'components/AppIcon';
 
 interface ChartData {
-  day: string;
+  label: string;
   amount: number;
 }
 
 interface SpendingChartProps {
-  data: ChartData[];
+  weeklyData: ChartData[];
+  monthlyData: ChartData[];
   currency?: string;
 }
 
@@ -20,7 +21,11 @@ interface CustomTooltipProps extends TooltipProps<number, string> {
   label?: string;
 }
 
-const SpendingChart: React.FC<SpendingChartProps> = ({ data, currency }) => {
+const SpendingChart: React.FC<SpendingChartProps> = ({
+  weeklyData,
+  monthlyData,
+  currency,
+}) => {
   const [viewMode, setViewMode] = useState<'weekly' | 'monthly'>('weekly');
 
   const formatCurrency = (amount: number): string => {
@@ -44,9 +49,11 @@ const SpendingChart: React.FC<SpendingChartProps> = ({ data, currency }) => {
     return null;
   };
 
-  const totalSpent = data.reduce((sum, item) => sum + item.amount, 0);
-  const averageSpent = totalSpent / data.length;
-  const highestWeek = Math.max(...data.map(item => item.amount));
+  const chartData = viewMode === 'weekly' ? weeklyData : monthlyData;
+
+  const totalSpent = chartData.reduce((sum, item) => sum + item.amount, 0);
+  const averageSpent = chartData.length ? totalSpent / chartData.length : 0;
+  const highestWeek = Math.max(...chartData.map((item) => item.amount));
 
   return (
     <div className="bg-surface rounded-xl p-6 card-shadow">
@@ -54,7 +61,9 @@ const SpendingChart: React.FC<SpendingChartProps> = ({ data, currency }) => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-text-primary">Tendencias de Gastos</h3>
-          <p className="text-sm text-text-secondary">Desglose semanal</p>
+          <p className="text-sm text-text-secondary">
+            {viewMode === 'weekly' ? 'Desglose semanal' : 'Desglose mensual'}
+          </p>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -80,9 +89,9 @@ const SpendingChart: React.FC<SpendingChartProps> = ({ data, currency }) => {
       {/* Chart */}
       <div className="h-64 mb-6" aria-label="Gráfico de Barras de Gastos Semanales">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-            <XAxis 
-              dataKey="day" 
+          <BarChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <XAxis
+              dataKey="label"
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: '#64748b' }}
