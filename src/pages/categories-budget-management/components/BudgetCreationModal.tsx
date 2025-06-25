@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Icon from '@/components/AppIcon';
 import { CategoryRecord } from '@/lib/supabase/categories';
 import { BudgetInput } from '@/lib/supabase/budgets';
-import DatePicker from '../../manual-expense-register/components/DatePicker';
 
 interface BudgetCreationModalProps {
   isOpen: boolean
@@ -89,12 +88,22 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
 
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">Fecha de Inicio</label>
-            <DatePicker value={startDate} onChange={setStartDate} />
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">Fecha de Fin</label>
-            <DatePicker value={endDate} onChange={setEndDate} />
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
           </div>
         </div>
 
