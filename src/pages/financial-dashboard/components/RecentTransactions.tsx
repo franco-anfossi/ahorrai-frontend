@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 import { RecentTransactionsProps, Transaction } from '@/types';
 
-const RecentTransactions: React.FC<RecentTransactionsProps> = ({ 
-  transactions, 
-  currency, 
-  onTransactionClick 
+const RecentTransactions: React.FC<RecentTransactionsProps> = ({
+  transactions,
+  currency,
+  onTransactionClick,
+  onDeleteTransaction,
 }) => {
-  const [swipedTransaction, setSwipedTransaction] = useState<number | null>(null);
+  const [swipedTransaction, setSwipedTransaction] = useState<string | null>(null);
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('es-ES', {
@@ -73,7 +74,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     }
   };
 
-  const handleSwipe = (transactionId: number, direction: 'left' | 'right'): void => {
+  const handleSwipe = (transactionId: string, direction: 'left' | 'right'): void => {
     if (direction === 'left') {
       setSwipedTransaction(transactionId);
     } else {
@@ -86,8 +87,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     setSwipedTransaction(null);
   };
 
-  const handleDelete = (transactionId: number): void => {
-    console.log('Delete transaction:', transactionId);
+  const handleDelete = (transactionId: string): void => {
+    onDeleteTransaction(transactionId);
     setSwipedTransaction(null);
   };
 

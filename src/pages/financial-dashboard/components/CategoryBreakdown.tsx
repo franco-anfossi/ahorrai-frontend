@@ -54,13 +54,6 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
           </p>
         </div>
 
-        <button className="p-2 rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-          <Icon
-            name="MoreHorizontal"
-            size={20}
-            className="text-text-secondary"
-          />
-        </button>
       </div>
 
       {/* Category List */}

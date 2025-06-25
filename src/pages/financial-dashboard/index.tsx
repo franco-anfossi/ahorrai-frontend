@@ -7,7 +7,7 @@ import { DashboardData, Transaction, HeaderAction, Profile } from "@/types";
 import { createClient } from "@/lib/supabase/component";
 import { fetchCategories, CategoryRecord } from "@/lib/supabase/categories";
 import { fetchBudgets, BudgetRecord } from "@/lib/supabase/budgets";
-import { fetchExpenses, ExpenseRecord } from "@/lib/supabase/expenses";
+import { fetchExpenses, ExpenseRecord, deleteExpense } from "@/lib/supabase/expenses";
 
 import ExpenseSummaryCard from "./components/ExpenseSummaryCard";
 import SpendingChart from "./components/SpendingChart";
@@ -149,13 +149,30 @@ const FinancialDashboard: NextPage = () => {
         amount: daysMap[d] || 0,
       }));
 
+      const months: string[] = [];
+      const monthlyMap: Record<string, number> = {};
+      for (let i = 5; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = date.toLocaleString('es-ES', { month: 'short' });
+        months.push(key);
+        monthlyMap[key] = 0;
+      }
+      exps.forEach((exp) => {
+        const d = new Date(exp.date);
+        const key = d.toLocaleString('es-ES', { month: 'short' });
+        if (key in monthlyMap) {
+          monthlyMap[key] += exp.amount;
+        }
+      });
+      const monthlySpending = months.map((m) => ({ label: m, amount: monthlyMap[m] }));
+
       const recentExpenses = [...exps]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 7)
-        .map((exp, idx) => {
+        .map((exp) => {
           const category = cats.find((c) => c.id === exp.category_id);
           return {
-            id: idx + 1,
+            id: exp.id,
             merchant: exp.merchant || "Gasto",
             amount: exp.amount,
             category: category?.name || "",
@@ -177,6 +194,7 @@ const FinancialDashboard: NextPage = () => {
           daysLeft,
         },
         weeklySpending,
+        monthlySpending,
         categoryBreakdown: topCategories,
         recentTransactions: recentExpenses,
       });
@@ -210,6 +228,15 @@ const FinancialDashboard: NextPage = () => {
 
   const handleTransactionClick = (transaction: Transaction): void => {
     router.push(`/expense-details-edit?id=${transaction.id}`);
+  };
+
+  const handleDeleteTransaction = async (id: string): Promise<void> => {
+    try {
+      await deleteExpense(id);
+      await fetchDashboardData();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const headerActions: HeaderAction[] = [
@@ -275,7 +302,8 @@ const FinancialDashboard: NextPage = () => {
           {/* Spending Chart */}
           {dashboardData && (
             <SpendingChart
-              data={dashboardData.weeklySpending}
+              weeklyData={dashboardData.weeklySpending}
+              monthlyData={dashboardData.monthlySpending}
               currency={dashboardData.currentMonth.currency}
             />
           )}
@@ -294,6 +322,7 @@ const FinancialDashboard: NextPage = () => {
               transactions={dashboardData.recentTransactions}
               currency={dashboardData.currentMonth.currency}
               onTransactionClick={handleTransactionClick}
+              onDeleteTransaction={handleDeleteTransaction}
             />
           )}
         </div>
