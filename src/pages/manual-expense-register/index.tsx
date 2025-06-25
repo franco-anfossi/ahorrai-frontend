@@ -9,6 +9,8 @@ import PaymentMethodSelector from './components/PaymentMethodSelector';
 import DatePicker from './components/DatePicker';
 import PhotoAttachment from './components/PhotoAttachment';
 import { Category, PaymentMethod } from '@/types';
+import { createClient } from '@/lib/supabase/component';
+import { createExpense } from '@/lib/supabase/expenses';
 
 interface PhotoData {
   file: File;
@@ -104,20 +106,31 @@ const ManualExpenseRegister: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Saving expense:', formData);
-      
-      // Success - navigate to dashboard
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      await createExpense(user.id, {
+        category_id: String(formData.category?.id ?? ''),
+        amount: parseFloat(formData.amount),
+        date: formData.date,
+        merchant: formData.merchant,
+        description: formData.notes,
+        payment_method: formData.paymentMethod?.name,
+      });
+
       router.push('/financial-dashboard');
     } catch (error) {
       console.error('Error saving expense:', error);
