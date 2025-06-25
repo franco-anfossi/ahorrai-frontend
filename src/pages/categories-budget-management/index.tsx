@@ -87,7 +87,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
 
   const handleCreateCategoryWithBudget = async (
     data: CategoryInput,
-    budgetAmount: number
+    budget: { amount: number; period: string; start_date: string; end_date: string }
   ): Promise<void> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -95,18 +95,12 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
       const createdCategory = await createCategory(user.id, data);
       setCategories(prev => [...prev, createdCategory]);
 
-      const start = new Date();
-      start.setDate(1);
-      const end = new Date(start);
-      end.setMonth(end.getMonth() + 1);
-      end.setDate(0);
-
       const budgetInput: BudgetInput = {
         category_id: createdCategory.id,
-        amount: budgetAmount,
-        period: 'mensual',
-        start_date: start.toISOString().split('T')[0],
-        end_date: end.toISOString().split('T')[0]
+        amount: budget.amount,
+        period: budget.period,
+        start_date: budget.start_date,
+        end_date: budget.end_date
       };
 
       const createdBudget = await createBudget(user.id, budgetInput);
@@ -328,11 +322,11 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
           setShowCreateWizard(false);
           setEditingCategory(null);
         }}
-        onSave={(catData, budgetAmount) => {
+        onSave={(catData, budgetData) => {
           if (editingCategory) {
             handleEditCategory(editingCategory, catData).then(() => setEditingCategory(null));
           } else {
-            handleCreateCategoryWithBudget(catData, budgetAmount);
+            handleCreateCategoryWithBudget(catData, budgetData);
           }
           setShowCreateWizard(false);
         }}

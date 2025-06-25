@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 import { CategoryInput, CategoryRecord } from '@/lib/supabase/categories';
 
+interface BudgetDetails {
+  amount: number;
+  period: string;
+  start_date: string;
+  end_date: string;
+}
+
 interface CategoryCreationWizardProps {
   isOpen: boolean;
   onClose: () => void;
   initialData?: CategoryRecord;
-  onSave: (category: CategoryInput, budget: number) => void;
+  onSave: (category: CategoryInput, budget: BudgetDetails) => void;
 }
 
 interface CategoryData {
@@ -14,6 +21,9 @@ interface CategoryData {
   icon: string;
   color: string;
   budget: number;
+  period: string;
+  startDate: string;
+  endDate: string;
   description: string;
 }
 
@@ -24,6 +34,13 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
     icon: 'Package',
     color: '#3B82F6',
     budget: 500,
+    period: 'mensual',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: (() => {
+      const d = new Date();
+      d.setMonth(d.getMonth() + 1);
+      return d.toISOString().split('T')[0];
+    })(),
     description: ''
   });
 
@@ -37,6 +54,13 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
         icon: initialData.icon,
         color: initialData.color,
         budget: 500,
+        period: 'mensual',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: (() => {
+          const d = new Date();
+          d.setMonth(d.getMonth() + 1);
+          return d.toISOString().split('T')[0];
+        })(),
         description: ''
       });
     } else {
@@ -45,10 +69,30 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
         icon: 'Package',
         color: '#3B82F6',
         budget: 500,
+        period: 'mensual',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: (() => {
+          const d = new Date();
+          d.setMonth(d.getMonth() + 1);
+          return d.toISOString().split('T')[0];
+        })(),
         description: ''
       });
     }
   }, [isOpen, initialData]);
+
+  useEffect(() => {
+    const start = new Date(categoryData.startDate);
+    if (isNaN(start.getTime())) return;
+    const end = new Date(start);
+    if (categoryData.period === 'mensual') {
+      end.setMonth(end.getMonth() + 1);
+    } else {
+      end.setFullYear(end.getFullYear() + 1);
+    }
+    const endStr = end.toISOString().split('T')[0];
+    setCategoryData(prev => ({ ...prev, endDate: endStr }));
+  }, [categoryData.startDate, categoryData.period]);
 
   const availableIcons: string[] = [
     'UtensilsCrossed', 'Car', 'Film', 'ShoppingBag', 'Heart', 'Zap',
@@ -92,8 +136,14 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
   };
 
   const handleSave = (): void => {
-    const { name, icon, color, budget } = categoryData;
-    onSave({ name, icon, color }, budget);
+    const { name, icon, color, budget, period, startDate, endDate } = categoryData;
+    const budgetDetails: BudgetDetails = {
+      amount: budget,
+      period,
+      start_date: startDate,
+      end_date: endDate
+    };
+    onSave({ name, icon, color }, budgetDetails);
   };
 
   const getRecommendedBudget = (): number => {
@@ -245,11 +295,11 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-text-primary mb-2">Definir Presupuesto</h3>
-                <p className="text-sm text-text-secondary mb-4">Define tu presupuesto mensual para esta categoría</p>
+                <p className="text-sm text-text-secondary mb-4">Indica el monto y periodo del presupuesto para esta categoría</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Presupuesto Mensual</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">Monto</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">$</span>
                   <input
@@ -261,6 +311,38 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
                     className="w-full pl-8 pr-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">Periodo</label>
+                <select
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  value={categoryData.period}
+                  onChange={(e) => handleInputChange('period', e.target.value)}
+                >
+                  <option value="mensual">Mensual</option>
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">Fecha de Inicio</label>
+                <input
+                  type="date"
+                  value={categoryData.startDate}
+                  onChange={(e) => handleInputChange('startDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">Fecha de Fin</label>
+                <input
+                  type="date"
+                  value={categoryData.endDate}
+                  readOnly
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-gray-100 focus:outline-none"
+                />
               </div>
 
               {/* Recommended Budget */}
