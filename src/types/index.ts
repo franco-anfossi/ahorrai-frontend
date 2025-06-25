@@ -151,7 +151,7 @@ export interface DashboardData {
 }
 
 export interface WeeklySpending {
-  day: string;
+  label: string;
   amount: number;
 }
 

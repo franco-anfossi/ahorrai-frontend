@@ -145,7 +145,7 @@ const FinancialDashboard: NextPage = () => {
       });
       const order = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
       const weeklySpending = order.map((d) => ({
-        day: d,
+        label: d,
         amount: daysMap[d] || 0,
       }));
 

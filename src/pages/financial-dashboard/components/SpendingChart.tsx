@@ -70,7 +70,9 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
           <button
             onClick={() => setViewMode('weekly')}
             className={`px-3 py-1 rounded-lg text-sm font-medium spring-transition ${
-              viewMode === 'weekly' ?'bg-primary text-white' :'bg-surface-hover text-text-secondary hover:text-text-primary'
+              viewMode === 'weekly'
+                ? 'bg-primary-500 text-white'
+                : 'bg-surface-hover text-text-secondary hover:text-text-primary'
             }`}
           >
             Semanal
@@ -78,7 +80,9 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
           <button
             onClick={() => setViewMode('monthly')}
             className={`px-3 py-1 rounded-lg text-sm font-medium spring-transition ${
-              viewMode === 'monthly' ?'bg-primary text-white' :'bg-surface-hover text-text-secondary hover:text-text-primary'
+              viewMode === 'monthly'
+                ? 'bg-primary-500 text-white'
+                : 'bg-surface-hover text-text-secondary hover:text-text-primary'
             }`}
           >
             Mensual
