@@ -11,7 +11,7 @@ import ShareExpenseModal from './components/ShareExpenseModal';
 import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import { Expense } from '../../types';
-import { fetchExpense } from '@/lib/supabase/expenses';
+import { fetchExpense, deleteExpense } from '@/lib/supabase/expenses';
 import { fetchCategoryById, CategoryRecord } from '@/lib/supabase/categories';
 
 interface ExpenseDetailsEditProps {}
@@ -73,7 +73,12 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
   };
 
   const handleEdit = (): void => {
-    // Toggle edit mode
+    if (expenseData) {
+      router.push({
+        pathname: '/manual-expense-register',
+        query: { edit: expenseData.id },
+      });
+    }
   };
 
   const handleSaveEdit = (updatedData: Partial<Expense>): void => {
@@ -95,11 +100,15 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = (): void => {
-    // Simulate API call
-    setTimeout(() => {
+  const confirmDelete = async (): Promise<void> => {
+    if (!expenseData) return;
+    try {
+      await deleteExpense(expenseData.id);
       router.push('/financial-dashboard');
-    }, 500);
+    } catch (err) {
+      console.error(err);
+      setShowDeleteModal(false);
+    }
   };
 
   const handleDuplicate = (): void => {
