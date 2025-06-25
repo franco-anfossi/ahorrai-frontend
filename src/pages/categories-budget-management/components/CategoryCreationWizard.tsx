@@ -192,7 +192,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
         </div>
 
         {/* Step Content */}
-        <div className="p-4">
+        <div className="p-4 max-h-[65vh] overflow-y-auto">
           {step === 1 && (
             <div className="space-y-4">
               <div>
