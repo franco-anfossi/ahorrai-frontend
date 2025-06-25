@@ -45,6 +45,7 @@ export interface CategoryRecord {
   name: string;
   icon: string;
   color: string;
+  description?: string;
   created_at: string;
 }
 
