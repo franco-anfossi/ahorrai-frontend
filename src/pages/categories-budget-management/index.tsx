@@ -12,7 +12,7 @@ import CategoryCreationWizard from './components/CategoryCreationWizard';
 import SpendingTrends from './components/SpendingTrends';
 import AccountSection from './components/AccountSection';
 import { CategoryInput, CategoryRecord, fetchCategories, createCategory, updateCategory, deleteCategory } from '@/lib/supabase/categories';
-import { BudgetInput, BudgetRecord, fetchBudgets, createBudget } from '@/lib/supabase/budgets';
+import { BudgetInput, BudgetRecord, fetchBudgets, createBudget, updateBudget, deleteBudget } from '@/lib/supabase/budgets';
 import { createClient } from '@/lib/supabase/component';
 
 interface CategoriesBudgetManagementProps {}
@@ -33,6 +33,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
   const [budgets, setBudgets] = useState<BudgetRecord[]>([]);
   const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false);
+  const [editingBudget, setEditingBudget] = useState<BudgetRecord | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -116,6 +117,28 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     }
   };
 
+  const handleEditBudgetSave = async (budget: BudgetRecord, data: BudgetInput): Promise<void> => {
+    try {
+      const updated = await updateBudget(budget.id, data);
+      setBudgets(prev => prev.map(b => b.id === budget.id ? updated : b));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setEditingBudget(null);
+      setShowBudgetModal(false);
+    }
+  };
+
+  const handleDeleteBudgetRecord = async (budget: BudgetRecord): Promise<void> => {
+    if (!window.confirm('¿Eliminar este presupuesto?')) return;
+    try {
+      await deleteBudget(budget.id);
+      setBudgets(prev => prev.filter(b => b.id !== budget.id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleUpdateBudget = (categoryId: number, amount: number): void => {
     console.log('Update budget for category:', categoryId, 'amount:', amount);
     setBudgetSliderOpen(false);
@@ -186,7 +209,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                 Configuración de Presupuesto
               </h3>
               <button
-                onClick={() => setShowBudgetModal(true)}
+                onClick={() => { setEditingBudget(null); setShowBudgetModal(true); }}
                 className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 Agregar Presupuesto
@@ -195,7 +218,18 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                 <div className="mt-4 space-y-3">
                   {budgets.map((b) => {
                     const cat = categories.find(c => c.id === b.category_id);
-                    return <BudgetCard key={b.id} budget={b} category={cat} />;
+                    return (
+                      <BudgetCard
+                        key={b.id}
+                        budget={b}
+                        category={cat}
+                        onEdit={() => {
+                          setEditingBudget(b);
+                          setShowBudgetModal(true);
+                        }}
+                        onDelete={() => handleDeleteBudgetRecord(b)}
+                      />
+                    );
                   })}
                 </div>
               )}
@@ -299,8 +333,15 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
       <BudgetCreationModal
         isOpen={showBudgetModal}
         categories={categories}
-        onClose={() => setShowBudgetModal(false)}
-        onSave={handleCreateBudget}
+        initialData={editingBudget || undefined}
+        onClose={() => { setShowBudgetModal(false); setEditingBudget(null); }}
+        onSave={(data) => {
+          if (editingBudget) {
+            handleEditBudgetSave(editingBudget, data);
+          } else {
+            handleCreateBudget(data);
+          }
+        }}
       />
     </div>
   );
