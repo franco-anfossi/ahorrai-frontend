@@ -6,26 +6,37 @@ import { BudgetInput } from '@/lib/supabase/budgets';
 interface BudgetCreationModalProps {
   isOpen: boolean
   categories: CategoryRecord[]
+  initialData?: BudgetInput
   onClose: () => void
   onSave: (budget: BudgetInput) => void
 }
 
-const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categories, onClose, onSave }) => {
+const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categories, initialData, onClose, onSave }) => {
   const [category, setCategory] = useState<CategoryRecord | null>(null)
   const [amount, setAmount] = useState<number>(0)
-  const [period, setPeriod] = useState<string>('monthly')
+  const [period, setPeriod] = useState<string>('mensual')
   const [startDate, setStartDate] = useState<string>('')
   const [endDate, setEndDate] = useState<string>('')
 
   useEffect(() => {
     if (isOpen) {
-      setCategory(categories[0] || null)
-      setAmount(0)
-      const today = new Date().toISOString().split('T')[0]
-      setStartDate(today)
-      setEndDate(today)
+      if (initialData) {
+        const cat = categories.find(c => c.id === initialData.category_id) || null
+        setCategory(cat)
+        setAmount(initialData.amount)
+        setPeriod(initialData.period)
+        setStartDate(initialData.start_date)
+        setEndDate(initialData.end_date)
+      } else {
+        setCategory(categories[0] || null)
+        setAmount(0)
+        const today = new Date().toISOString().split('T')[0]
+        setStartDate(today)
+        setEndDate(today)
+        setPeriod('mensual')
+      }
     }
-  }, [isOpen, categories])
+  }, [isOpen, categories, initialData])
 
   if (!isOpen) return null
 
@@ -44,7 +55,7 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="w-full max-w-md bg-surface rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-text-primary">Nuevo Presupuesto</h3>
+          <h3 className="text-lg font-semibold text-text-primary">{initialData ? 'Editar Presupuesto' : 'Nuevo Presupuesto'}</h3>
           <button onClick={onClose} className="p-2 rounded-lg hover:bg-surface-hover spring-transition">
             <Icon name="X" size={20} className="text-text-secondary" />
           </button>
@@ -81,8 +92,8 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
             >
-              <option value="monthly">Mensual</option>
-              <option value="yearly">Anual</option>
+              <option value="mensual">Mensual</option>
+              <option value="anual">Anual</option>
             </select>
           </div>
 
@@ -118,7 +129,7 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
             onClick={handleSave}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
-            Guardar
+            {initialData ? 'Guardar Cambios' : 'Guardar'}
           </button>
         </div>
       </div>
