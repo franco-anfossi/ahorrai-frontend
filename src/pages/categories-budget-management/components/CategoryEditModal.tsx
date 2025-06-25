@@ -54,6 +54,7 @@ const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('Package');
   const [color, setColor] = useState('#3B82F6');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (!isOpen) return;
@@ -61,17 +62,19 @@ const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
       setName(initialData.name);
       setIcon(initialData.icon);
       setColor(initialData.color);
+      setDescription(initialData.description || '');
     } else {
       setName('');
       setIcon('Package');
       setColor('#3B82F6');
+      setDescription('');
     }
   }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
   const handleSave = (): void => {
-    onSave({ name, icon, color });
+    onSave({ name, icon, color, description });
   };
 
   return (
@@ -92,6 +95,16 @@ const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-2">Descripción (Opcional)</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             />
           </div>
 
@@ -138,9 +151,14 @@ const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
               >
                 <Icon name={icon} size={20} style={{ color }} />
               </div>
-              <p className="font-medium text-text-primary">
-                {name || 'Nombre de la Categoría'}
-              </p>
+              <div>
+                <p className="font-medium text-text-primary">
+                  {name || 'Nombre de la Categoría'}
+                </p>
+                <p className="text-sm text-text-secondary">
+                  {description || 'Descripción'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
