@@ -9,6 +9,7 @@ import BudgetCreationModal from './components/BudgetCreationModal';
 import BudgetCard from './components/BudgetCard';
 import AlertSettings from './components/AlertSettings';
 import CategoryCreationWizard from './components/CategoryCreationWizard';
+import CategoryEditModal from './components/CategoryEditModal';
 import SpendingTrends from './components/SpendingTrends';
 import AccountSection from './components/AccountSection';
 import { CategoryInput, CategoryRecord, fetchCategories, createCategory, updateCategory, deleteCategory } from '@/lib/supabase/categories';
@@ -27,6 +28,7 @@ interface Tab {
 const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = () => {
   const [activeTab, setActiveTab] = useState<string>('categories');
   const [showCreateWizard, setShowCreateWizard] = useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [editingCategory, setEditingCategory] = useState<CategoryRecord | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [budgetSliderOpen, setBudgetSliderOpen] = useState<boolean>(false);
@@ -260,7 +262,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                     budget={stats.budget}
                     onEdit={() => {
                       setEditingCategory(category);
-                      setShowCreateWizard(true);
+                      setShowEditModal(true);
                     }}
                     onDelete={() => handleDeleteCategory(category)}
                   />
@@ -376,18 +378,25 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
       {/* Modals */}
       <CategoryCreationWizard
         isOpen={showCreateWizard}
+        onClose={() => setShowCreateWizard(false)}
+        onSave={(catData, budgetData) => {
+          handleCreateCategoryWithBudget(catData, budgetData);
+          setShowCreateWizard(false);
+        }}
+      />
+
+      <CategoryEditModal
+        isOpen={showEditModal}
         initialData={editingCategory || undefined}
         onClose={() => {
-          setShowCreateWizard(false);
+          setShowEditModal(false);
           setEditingCategory(null);
         }}
-        onSave={(catData, budgetData) => {
+        onSave={(data) => {
           if (editingCategory) {
-            handleEditCategory(editingCategory, catData).then(() => setEditingCategory(null));
-          } else {
-            handleCreateCategoryWithBudget(catData, budgetData);
+            handleEditCategory(editingCategory, data).then(() => setEditingCategory(null));
           }
-          setShowCreateWizard(false);
+          setShowEditModal(false);
         }}
       />
 
