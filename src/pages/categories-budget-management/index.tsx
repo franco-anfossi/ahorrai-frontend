@@ -16,6 +16,7 @@ import { CategoryInput, CategoryRecord, fetchCategories, createCategory, updateC
 import { BudgetInput, BudgetRecord, fetchBudgets, createBudget, updateBudget, deleteBudget } from '@/lib/supabase/budgets';
 import { ExpenseRecord, fetchExpenses } from '@/lib/supabase/expenses';
 import { createClient } from '@/lib/supabase/component';
+import { createActionCreatorInvariantMiddleware } from '@reduxjs/toolkit';
 
 interface CategoriesBudgetManagementProps {}
 
