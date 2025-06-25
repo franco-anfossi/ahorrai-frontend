@@ -10,3 +10,8 @@ body {
   font-family: inherit;
   margin: unset;
 }
+
+/* Hide default calendar icon to avoid overlap with custom icon */
+input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}

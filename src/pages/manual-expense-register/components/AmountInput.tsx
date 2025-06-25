@@ -109,7 +109,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
               onClick={() => onCurrencyChange?.(curr)}
               className={`px-3 py-1 text-xs font-medium rounded-lg spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
                 currency === curr
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary-600 text-white'
                   : 'bg-surface text-text-secondary hover:bg-surface-hover'
               }`}
             >

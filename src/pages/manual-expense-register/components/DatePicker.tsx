@@ -57,7 +57,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange }) => {
             type="date"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-border bg-surface hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:border-primary spring-transition"
+            className="appearance-none w-full px-4 py-3 rounded-lg border border-border bg-surface hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:border-primary spring-transition"
           />
           <Icon 
             name="Calendar" 
@@ -88,7 +88,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange }) => {
                 onClick={() => onChange(dateOption.value)}
                 className={`px-3 py-2 text-sm font-medium rounded-lg spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
                   value === dateOption.value
-                    ? 'bg-primary text-white'
+                    ? 'bg-primary-600 text-white'
                     : 'bg-surface text-text-primary hover:bg-surface-hover border border-border'
                 }`}
               >
