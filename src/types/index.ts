@@ -64,7 +64,7 @@ export interface RootState {
 
 // Transaction Types
 export interface Transaction {
-  id: number;
+  id: string;
   merchant: string;
   amount: number;
   category: string;
@@ -77,7 +77,7 @@ export interface Transaction {
 
 // Expense Types
 export interface Expense {
-  id: number;
+  id: string;
   amount: number;
   currency: string;
   category: {

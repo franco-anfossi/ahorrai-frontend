@@ -48,7 +48,7 @@ const FinancialDashboard: NextPage = () => {
     ],
     recentTransactions: [
       {
-        id: 1,
+        id: '1d94fa0c-a350-40d8-84b5-895c30fb055d',
         merchant: "Starbucks Coffee",
         amount: 12.45,
         category: "Comida y Restaurantes",
@@ -58,7 +58,7 @@ const FinancialDashboard: NextPage = () => {
         icon: "Coffee"
       },
       {
-        id: 2,
+        id: 'e6c1d1a3-2985-4c40-9d63-2f57f6aea2fa',
         merchant: "Uber Ride",
         amount: 18.75,
         category: "Transporte",
@@ -68,7 +68,7 @@ const FinancialDashboard: NextPage = () => {
         icon: "Car"
       },
       {
-        id: 3,
+        id: 'b1a9371e-d1a9-462b-93d3-1a80f04f0b44',
         merchant: "Amazon Purchase",
         amount: 89.99,
         category: "Compras",
@@ -78,7 +78,7 @@ const FinancialDashboard: NextPage = () => {
         icon: "Package"
       },
       {
-        id: 4,
+        id: '5457205a-bf9a-420c-b3d9-0b4059ed10e9',
         merchant: "Netflix Subscription",
         amount: 15.99,
         category: "Entretenimiento",
@@ -88,7 +88,7 @@ const FinancialDashboard: NextPage = () => {
         icon: "Film"
       },
       {
-        id: 5,
+        id: 'd0022dd0-7ee5-4bf1-bf5e-d0b7b9e2b86c',
         merchant: "Whole Foods Market",
         amount: 127.83,
         category: "Comida y Restaurantes",
@@ -98,7 +98,7 @@ const FinancialDashboard: NextPage = () => {
         icon: "ShoppingCart"
       },
       {
-        id: 6,
+        id: '16cb8653-1307-43e0-b0e2-fc3d9a94b3c9',
         merchant: "Shell Gas Station",
         amount: 45.20,
         category: "Transporte",
@@ -108,7 +108,7 @@ const FinancialDashboard: NextPage = () => {
         icon: "Fuel"
       },
       {
-        id: 7,
+        id: 'f4e47ce1-6d9f-4cf2-b75f-2f1a57a4bd01',
         merchant: "Movie Theater",
         amount: 32.50,
         category: "Entretenimiento",

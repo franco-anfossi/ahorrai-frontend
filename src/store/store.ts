@@ -56,7 +56,7 @@ const appSlice = createSlice({
         state.expenses[index] = action.payload;
       }
     },
-    deleteExpense: (state, action: PayloadAction<number>) => {
+    deleteExpense: (state, action: PayloadAction<string>) => {
       state.expenses = state.expenses.filter(expense => expense.id !== action.payload);
     },
     setCategories: (state, action: PayloadAction<Category[]>) => {

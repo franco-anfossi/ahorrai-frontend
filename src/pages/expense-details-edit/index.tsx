@@ -10,6 +10,7 @@ import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import SplitExpenseModal from './components/SplitExpenseModal';
 import ShareExpenseModal from './components/ShareExpenseModal';
 import HeaderBar from 'components/ui/HeaderBar';
+import BottomTabNavigation from '@/components/ui/BottomTabNavigation';
 import { Expense } from '../../types';
 
 interface ExpenseDetailsEditProps {}
@@ -25,9 +26,9 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
   const [expenseData, setExpenseData] = useState<Expense | null>(null);
 
   // Mock expense data that matches dashboard transactions
-  const mockExpenseDataMap: Record<number, Expense> = {
-    1: {
-      id: 1,
+  const mockExpenseDataMap: Record<string, Expense> = {
+    '1d94fa0c-a350-40d8-84b5-895c30fb055d': {
+      id: '1d94fa0c-a350-40d8-84b5-895c30fb055d',
       amount: 12.45,
       currency: "USD",
       category: {
@@ -64,8 +65,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         }
       ]
     },
-    2: {
-      id: 2,
+    'e6c1d1a3-2985-4c40-9d63-2f57f6aea2fa': {
+      id: 'e6c1d1a3-2985-4c40-9d63-2f57f6aea2fa',
       amount: 18.75,
       currency: "USD",
       category: {
@@ -96,8 +97,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         }
       ]
     },
-    3: {
-      id: 3,
+    'b1a9371e-d1a9-462b-93d3-1a80f04f0b44': {
+      id: 'b1a9371e-d1a9-462b-93d3-1a80f04f0b44',
       amount: 89.99,
       currency: "USD",
       category: {
@@ -134,8 +135,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         }
       ]
     },
-    4: {
-      id: 4,
+    '5457205a-bf9a-420c-b3d9-0b4059ed10e9': {
+      id: '5457205a-bf9a-420c-b3d9-0b4059ed10e9',
       amount: 15.99,
       currency: "USD",
       category: {
@@ -166,8 +167,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         }
       ]
     },
-    5: {
-      id: 5,
+    'd0022dd0-7ee5-4bf1-bf5e-d0b7b9e2b86c': {
+      id: 'd0022dd0-7ee5-4bf1-bf5e-d0b7b9e2b86c',
       amount: 127.83,
       currency: "USD",
       category: {
@@ -198,8 +199,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         }
       ]
     },
-    6: {
-      id: 6,
+    '16cb8653-1307-43e0-b0e2-fc3d9a94b3c9': {
+      id: '16cb8653-1307-43e0-b0e2-fc3d9a94b3c9',
       amount: 45.20,
       currency: "USD",
       category: {
@@ -236,8 +237,7 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
     const loadExpenseData = () => {
       const { id } = router.query;
       if (id && typeof id === 'string') {
-        const expenseId = parseInt(id);
-        const data = mockExpenseDataMap[expenseId];
+        const data = mockExpenseDataMap[id];
         if (data) {
           setExpenseData(data);
         } else {
@@ -291,7 +291,7 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
     if (expenseData) {
       const newExpense = {
         ...expenseData,
-        id: Date.now(),
+        id: `dup-${Date.now()}`,
         date: new Date().toISOString(),
         description: `${expenseData.description} (copia)`
       };
@@ -469,6 +469,8 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
         onSave={handleSaveEdit}
         isSaving={isSaving}
       />
+
+      <BottomTabNavigation />
     </div>
   );
 };

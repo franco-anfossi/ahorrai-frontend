@@ -21,7 +21,7 @@ interface FormData {
   merchant: string;
   date: string;
   paymentMethod: PaymentMethod | null;
-  notes: string;
+  description: string;
   tags: string[];
   photo: PhotoData | null;
 }
@@ -43,7 +43,7 @@ const ManualExpenseRegister: React.FC = () => {
     merchant: '',
     date: new Date().toISOString().split('T')[0],
     paymentMethod: null,
-    notes: '',
+    description: '',
     tags: [],
     photo: null
   });
@@ -232,15 +232,15 @@ const ManualExpenseRegister: React.FC = () => {
           {/* Optional Fields */}
           {showOptionalFields && (
             <div className="space-y-4 animate-slide-down">
-              {/* Notes */}
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-text-primary mb-2">
-                  Notas
+                  Descripción
                 </label>
                 <textarea
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Agrega notas adicionales..."
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  placeholder="Agrega una descripción..."
                   rows={3}
                   className="w-full px-4 py-3 rounded-lg border border-border bg-surface hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:border-primary spring-transition"
                 />

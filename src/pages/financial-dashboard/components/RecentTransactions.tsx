@@ -7,7 +7,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   currency, 
   onTransactionClick 
 }) => {
-  const [swipedTransaction, setSwipedTransaction] = useState<number | null>(null);
+  const [swipedTransaction, setSwipedTransaction] = useState<string | null>(null);
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('es-ES', {
@@ -73,7 +73,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     }
   };
 
-  const handleSwipe = (transactionId: number, direction: 'left' | 'right'): void => {
+  const handleSwipe = (transactionId: string, direction: 'left' | 'right'): void => {
     if (direction === 'left') {
       setSwipedTransaction(transactionId);
     } else {
@@ -86,7 +86,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     setSwipedTransaction(null);
   };
 
-  const handleDelete = (transactionId: number): void => {
+  const handleDelete = (transactionId: string): void => {
     console.log('Delete transaction:', transactionId);
     setSwipedTransaction(null);
   };
