@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Icon from '@/components/AppIcon';
 import HeaderBar from '@/components/ui/HeaderBar';
@@ -8,9 +8,10 @@ import CategorySelector from './components/CategorySelector';
 import PaymentMethodSelector from './components/PaymentMethodSelector';
 import DatePicker from './components/DatePicker';
 import PhotoAttachment from './components/PhotoAttachment';
-import { Category, PaymentMethod } from '@/types';
+import { PaymentMethod } from '@/types';
 import { createClient } from '@/lib/supabase/component';
 import { createExpense } from '@/lib/supabase/expenses';
+import { fetchCategories, CategoryRecord } from '@/lib/supabase/categories';
 
 interface PhotoData {
   file: File;
@@ -19,7 +20,7 @@ interface PhotoData {
 
 interface FormData {
   amount: string;
-  category: Category | null;
+  category: CategoryRecord | null;
   merchant: string;
   date: string;
   paymentMethod: PaymentMethod | null;
@@ -57,16 +58,23 @@ const ManualExpenseRegister: React.FC = () => {
     "Starbucks", "McDonald's", "Target", "Walmart", "Amazon", "Shell", "Exxon", "Uber", "Lyft", "Netflix"
   ];
 
-  const categories: Category[] = [
-    { id: 1, name: "Comida y Restaurantes", icon: "UtensilsCrossed", color: "bg-red-100 text-red-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 2, name: "Transporte", icon: "Car", color: "bg-blue-100 text-blue-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 3, name: "Compras", icon: "ShoppingBag", color: "bg-purple-100 text-purple-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 4, name: "Entretenimiento", icon: "Film", color: "bg-pink-100 text-pink-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 5, name: "Facturas y Servicios", icon: "Receipt", color: "bg-yellow-100 text-yellow-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 6, name: "Salud", icon: "Heart", color: "bg-green-100 text-green-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 7, name: "Viajes", icon: "Plane", color: "bg-indigo-100 text-indigo-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' },
-    { id: 8, name: "Educación", icon: "GraduationCap", color: "bg-teal-100 text-teal-600", budget: 0, spent: 0, percentage: 0, trend: 'stable', trendValue: 0, isOverBudget: false, transactions: 0, lastTransaction: '' }
-  ];
+  const [categories, setCategories] = useState<CategoryRecord[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        try {
+          const result = await fetchCategories(user.id);
+          setCategories(result);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    load();
+  }, []);
 
   const paymentMethods: PaymentMethod[] = [
     { id: 1, name: "Tarjeta de Crédito", icon: "CreditCard", type: "card" },

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Icon from '@/components/AppIcon';
-import { Category } from '@/types';
+import { CategoryRecord } from '@/lib/supabase/categories';
 
 interface CategorySelectorProps {
-  categories: Category[];
-  selectedCategory: Category | null;
-  onSelect: (category: Category) => void;
+  categories: CategoryRecord[];
+  selectedCategory: CategoryRecord | null;
+  onSelect: (category: CategoryRecord) => void;
   error?: string;
 }
 
@@ -17,7 +17,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleCategorySelect = (category: Category): void => {
+  const handleCategorySelect = (category: CategoryRecord): void => {
     onSelect(category);
     setIsOpen(false);
   };
