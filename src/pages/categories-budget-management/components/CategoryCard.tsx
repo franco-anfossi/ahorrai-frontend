@@ -10,8 +10,9 @@ interface CategoryCardProps {
   average?: number | null;
   vsLastMonth?: number | null;
   budget?: number | null;
-  onEdit: () => void;
+  onEdit?: () => void;
   onDelete?: () => void;
+  showActions?: boolean;
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({
@@ -24,6 +25,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   budget,
   onEdit,
   onDelete,
+  showActions = true,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -33,6 +35,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       style: 'currency',
       currency: 'CLP',
     }).format(val);
+
+  const progressPercent = progress <= 1 ? progress * 100 : progress;
 
   return (
     <div className="relative">
@@ -58,13 +62,13 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
-                    width: `${Math.min(progress, 100)}%`,
+                    width: `${Math.min(progressPercent, 100)}%`,
                     backgroundColor: category.color,
                   }}
                 />
               </div>
               <span className="text-xs text-text-secondary font-medium min-w-[40px] text-right">
-                {Math.round(progress)}%
+                {Math.round(progressPercent)}%
               </span>
             </div>
             {category.description && (
@@ -85,38 +89,42 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               className="text-text-secondary"
             />
           </button>
-          <div className="relative">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            >
-              <Icon name="Settings" size={18} className="text-text-secondary" />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-32 bg-surface border border-border rounded-lg shadow-lg z-50">
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onEdit();
-                  }}
-                  className="w-full text-left px-4 py-2 hover:bg-surface-hover spring-transition"
-                >
-                  Editar
-                </button>
-                {onDelete && (
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      onDelete();
-                    }}
-                    className="w-full text-left px-4 py-2 text-error hover:bg-error-50 spring-transition"
-                  >
-                    Eliminar
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
+          {showActions && (
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              >
+                <Icon name="Settings" size={18} className="text-text-secondary" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-32 bg-surface border border-border rounded-lg shadow-lg z-50">
+                  {onEdit && (
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onEdit();
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-surface-hover spring-transition"
+                    >
+                      Editar
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onDelete();
+                      }}
+                      className="w-full text-left px-4 py-2 text-error hover:bg-error-50 spring-transition"
+                    >
+                      Eliminar
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       {menuOpen && <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />}

@@ -60,25 +60,28 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
 
       {/* Category List */}
       <div className="space-y-4">
-        {data.map((category, index) => (
-          <CategoryCard
-            key={index}
-            category={{
-              id: String(index),
-              name: category.name,
-              icon: category.icon,
-              color: category.color,
-              description: '',
-            }}
-            progress={category.percentage}
-            amount={category.amount}
-            transactions={category.transactions}
-            average={category.average}
-            vsLastMonth={category.vsLastMonth}
-            budget={category.budget}
-            onEdit={() => router.push('/categories-budget-management')}
-          />
-        ))}
+        {data.map((category, index) => {
+          const pct = category.percentage <= 1 ? category.percentage * 100 : category.percentage;
+          return (
+            <CategoryCard
+              key={index}
+              category={{
+                id: String(index),
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+                description: '',
+              }}
+              progress={pct}
+              amount={category.amount}
+              transactions={category.transactions}
+              average={category.average}
+              vsLastMonth={category.vsLastMonth}
+              budget={category.budget}
+              showActions={false}
+            />
+          );
+        })}
       </div>
       {/* View All Categories Button */}
       <button
