@@ -61,7 +61,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
           d.setMonth(d.getMonth() + 1);
           return d.toISOString().split('T')[0];
         })(),
-        description: ''
+        description: initialData.description || ''
       });
     } else {
       setCategoryData({
@@ -136,14 +136,14 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
   };
 
   const handleSave = (): void => {
-    const { name, icon, color, budget, period, startDate, endDate } = categoryData;
+    const { name, icon, color, budget, period, startDate, endDate, description } = categoryData;
     const budgetDetails: BudgetDetails = {
       amount: budget,
       period,
       start_date: startDate,
       end_date: endDate
     };
-    onSave({ name, icon, color }, budgetDetails);
+    onSave({ name, icon, color, description }, budgetDetails);
   };
 
   const getRecommendedBudget = (): number => {

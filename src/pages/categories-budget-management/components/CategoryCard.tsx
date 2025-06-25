@@ -67,6 +67,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 {Math.round(progress)}%
               </span>
             </div>
+            {category.description && (
+              <p className="text-xs text-text-secondary mt-1 truncate">
+                {category.description}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-1 flex-shrink-0 ml-2">

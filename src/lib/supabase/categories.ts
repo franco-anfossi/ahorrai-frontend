@@ -4,6 +4,7 @@ export interface CategoryInput {
   name: string
   icon: string
   color: string
+  description?: string
 }
 
 export interface CategoryRecord extends CategoryInput {
