@@ -85,6 +85,37 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     }
   };
 
+  const handleCreateCategoryWithBudget = async (
+    data: CategoryInput,
+    budgetAmount: number
+  ): Promise<void> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    try {
+      const createdCategory = await createCategory(user.id, data);
+      setCategories(prev => [...prev, createdCategory]);
+
+      const start = new Date();
+      start.setDate(1);
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
+      end.setDate(0);
+
+      const budgetInput: BudgetInput = {
+        category_id: createdCategory.id,
+        amount: budgetAmount,
+        period: 'mensual',
+        start_date: start.toISOString().split('T')[0],
+        end_date: end.toISOString().split('T')[0]
+      };
+
+      const createdBudget = await createBudget(user.id, budgetInput);
+      setBudgets(prev => [...prev, createdBudget]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleEditCategory = async (category: CategoryRecord, data: CategoryInput): Promise<void> => {
     try {
       const updated = await updateCategory(category.id, data);
@@ -151,21 +182,6 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   };
 
 
-  const headerActions = [
-    {
-      icon: 'Plus',
-      label: 'Crear Categoría',
-      onClick: () => {
-        setEditingCategory(null);
-        setShowCreateWizard(true);
-      }
-    },
-    {
-      icon: 'Save',
-      label: 'Guardar Cambios',
-      onClick: handleSaveChanges
-    }
-  ];
 
   const renderTabContent = (): React.ReactNode | null => {
     switch (activeTab) {
@@ -268,10 +284,9 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <HeaderBar 
+      <HeaderBar
         title="Configuración"
         showBack={true}
-        actions={headerActions}
       />
 
       {/* Tab Navigation */}
@@ -313,11 +328,11 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
           setShowCreateWizard(false);
           setEditingCategory(null);
         }}
-        onSave={(data) => {
+        onSave={(catData, budgetAmount) => {
           if (editingCategory) {
-            handleEditCategory(editingCategory, data).then(() => setEditingCategory(null));
+            handleEditCategory(editingCategory, catData).then(() => setEditingCategory(null));
           } else {
-            handleCreateCategory(data);
+            handleCreateCategoryWithBudget(catData, budgetAmount);
           }
           setShowCreateWizard(false);
         }}
