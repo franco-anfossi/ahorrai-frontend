@@ -104,7 +104,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
               <Icon name={initialData ? 'Pencil' : 'Plus'} size={16} className="text-primary" />
             </div>
             <h2 className="text-lg font-semibold text-text-primary">
-              {initialData ? 'Edit Category' : 'Create Category'}
+              {initialData ? 'Editar Categoría' : 'Crear Categoría'}
             </h2>
           </div>
           <button
@@ -118,7 +118,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
         {/* Progress Indicator */}
         <div className="px-4 py-3 bg-background">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-text-secondary">Step {step} of 3</span>
+            <span className="text-sm text-text-secondary">Paso {step} de 3</span>
             <span className="text-sm text-text-secondary">{Math.round((step/3)*100)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-1">
@@ -134,27 +134,27 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-2">Category Details</h3>
-                <p className="text-sm text-text-secondary mb-4">Give your category a name and description</p>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">Detalles de Categoría</h3>
+                <p className="text-sm text-text-secondary mb-4">Asigna un nombre y descripción a la categoría</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Category Name</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">Nombre de la Categoría</label>
                 <input
                   type="text"
                   value={categoryData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="e.g., Food & Dining"
+                  placeholder="ej.: Alimentación"
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Description (Optional)</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">Descripción (Opcional)</label>
                 <textarea
                   value={categoryData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Brief description of this category..."
+                  placeholder="Breve descripción de esta categoría..."
                   rows={3}
                   className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary resize-none"
                 />
@@ -165,13 +165,13 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-2">Customize Appearance</h3>
-                <p className="text-sm text-text-secondary mb-4">Choose an icon and color for your category</p>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">Personalizar Apariencia</h3>
+                <p className="text-sm text-text-secondary mb-4">Elige un ícono y color para tu categoría</p>
               </div>
 
               {/* Icon Selection */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-3">Select Icon</label>
+                <label className="block text-sm font-medium text-text-primary mb-3">Seleccionar Ícono</label>
                 <div className="grid grid-cols-6 gap-2">
                   {availableIcons.map((iconName) => (
                     <button
@@ -190,7 +190,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
 
               {/* Color Selection */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-3">Select Color</label>
+                <label className="block text-sm font-medium text-text-primary mb-3">Seleccionar Color</label>
                 <div className="grid grid-cols-6 gap-2">
                   {availableColors.map((color) => (
                     <button
@@ -208,7 +208,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
 
               {/* Preview */}
               <div className="bg-background rounded-lg p-3">
-                <p className="text-sm font-medium text-text-primary mb-2">Preview</p>
+                <p className="text-sm font-medium text-text-primary mb-2">Vista previa</p>
                 <div className="flex items-center space-x-3">
                   <div 
                     className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -221,8 +221,8 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
                     />
                   </div>
                   <div>
-                    <p className="font-medium text-text-primary">{categoryData.name || 'Category Name'}</p>
-                    <p className="text-sm text-text-secondary">{categoryData.description || 'Description'}</p>
+                    <p className="font-medium text-text-primary">{categoryData.name || 'Nombre de la Categoría'}</p>
+                    <p className="text-sm text-text-secondary">{categoryData.description || 'Descripción'}</p>
                   </div>
                 </div>
               </div>
@@ -232,12 +232,12 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-2">Set Budget</h3>
-                <p className="text-sm text-text-secondary mb-4">Define your monthly budget for this category</p>
+                <h3 className="text-lg font-semibold text-text-primary mb-2">Definir Presupuesto</h3>
+                <p className="text-sm text-text-secondary mb-4">Define tu presupuesto mensual para esta categoría</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Monthly Budget</label>
+                <label className="block text-sm font-medium text-text-primary mb-2">Presupuesto Mensual</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">$</span>
                   <input
@@ -255,16 +255,16 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
               <div className="bg-primary-50 rounded-lg p-3">
                 <div className="flex items-center space-x-2 mb-2">
                   <Icon name="Lightbulb" size={16} className="text-primary" />
-                  <span className="text-sm font-medium text-text-primary">Recommended Budget</span>
+                  <span className="text-sm font-medium text-text-primary">Presupuesto Recomendado</span>
                 </div>
                 <p className="text-sm text-text-secondary">
-                  Based on similar categories, we recommend ${getRecommendedBudget()} per month.
+                  Basado en categorías similares, recomendamos ${getRecommendedBudget()} al mes.
                 </p>
                 <button
                   onClick={() => handleInputChange('budget', getRecommendedBudget())}
                   className="mt-2 text-sm text-primary hover:text-primary-700 font-medium"
                 >
-                  Use Recommended
+                  Usar recomendado
                 </button>
               </div>
 
@@ -272,12 +272,12 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
               <div className="bg-accent-50 rounded-lg p-3">
                 <div className="flex items-center space-x-2 mb-2">
                   <Icon name="Info" size={16} className="text-accent" />
-                  <span className="text-sm font-medium text-text-primary">Budget Tips</span>
+                  <span className="text-sm font-medium text-text-primary">Consejos de Presupuesto</span>
                 </div>
                 <ul className="text-sm text-text-secondary space-y-1">
-                  <li>• Start with a realistic amount based on your current spending</li>
-                  <li>• You can always adjust the budget later</li>
-                  <li>• Consider seasonal variations in your spending</li>
+                  <li>• Comienza con un monto realista basado en tu gasto actual</li>
+                  <li>• Siempre puedes ajustar el presupuesto después</li>
+                  <li>• Considera variaciones estacionales en tus gastos</li>
                 </ul>
               </div>
             </div>
@@ -290,7 +290,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
             onClick={step === 1 ? onClose : handlePrevious}
             className="px-4 py-2 text-text-secondary hover:text-text-primary spring-transition"
           >
-            {step === 1 ? 'Cancel' : 'Previous'}
+            {step === 1 ? 'Cancelar' : 'Anterior'}
           </button>
           
           <div className="flex space-x-2">
@@ -298,17 +298,17 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
               <button
                 onClick={handleNext}
                 disabled={!categoryData.name.trim()}
-                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Next
+                Siguiente
               </button>
             ) : (
               <button
                 onClick={handleSave}
                 disabled={!categoryData.name.trim() || categoryData.budget <= 0}
-                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {initialData ? 'Save Changes' : 'Create Category'}
+                {initialData ? 'Guardar Cambios' : 'Crear Categoría'}
               </button>
             )}
           </div>

@@ -87,7 +87,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
   };
 
   const handleDeleteCategory = async (category: CategoryRecord): Promise<void> => {
-    if (!window.confirm('Delete this category?')) return;
+    if (!window.confirm('¿Eliminar esta categoría?')) return;
     try {
       await deleteCategory(category.id);
       setCategories((prev) => prev.filter((c) => c.id !== category.id));
@@ -135,7 +135,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
               </h3>
               <button
                 onClick={() => setShowCreateWizard(true)}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 <Icon name="Plus" size={16} className="inline mr-1" />
                 Nueva Categoría
