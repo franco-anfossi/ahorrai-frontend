@@ -35,9 +35,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       style: 'currency',
       currency: 'CLP',
     }).format(val);
-
+  
   const progressPercent = progress <= 1 ? progress * 100 : progress;
-
   return (
     <div className="relative">
       <div className="flex items-center justify-between p-3 bg-surface rounded-lg hover:bg-surface-hover spring-transition card-shadow">
