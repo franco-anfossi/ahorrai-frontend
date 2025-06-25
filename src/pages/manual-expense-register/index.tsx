@@ -10,8 +10,8 @@ import DatePicker from './components/DatePicker';
 import PhotoAttachment from './components/PhotoAttachment';
 import { PaymentMethod } from '@/types';
 import { createClient } from '@/lib/supabase/component';
-import { createExpense } from '@/lib/supabase/expenses';
-import { fetchCategories, CategoryRecord } from '@/lib/supabase/categories';
+import { createExpense, updateExpense, fetchExpense } from '@/lib/supabase/expenses';
+import { fetchCategories, CategoryRecord, fetchCategoryById } from '@/lib/supabase/categories';
 
 interface PhotoData {
   file: File;
@@ -41,6 +41,8 @@ const ManualExpenseRegister: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showOptionalFields, setShowOptionalFields] = useState(false);
   const [currency, setCurrency] = useState('CLP');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     amount: '',
     category: null,
@@ -76,6 +78,54 @@ const ManualExpenseRegister: React.FC = () => {
     };
     load();
   }, []);
+
+  useEffect(() => {
+    if (!router.isReady || categories.length === 0) return;
+    const { duplicate, edit } = router.query;
+    if (duplicate && typeof duplicate === 'string') {
+      try {
+        const exp = JSON.parse(duplicate);
+        setFormData({
+          amount: String(exp.amount),
+          category: categories.find((c) => c.id === String(exp.category.id)) || null,
+          merchant: exp.merchant || '',
+          date: exp.date ? exp.date.split('T')[0] : new Date().toISOString().split('T')[0],
+          paymentMethod: paymentMethods.find((p) => p.name === exp.paymentMethod) || null,
+          description: exp.description || '',
+          tags: exp.tags || [],
+          photo: null,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    } else if (edit && typeof edit === 'string') {
+      const loadExpense = async () => {
+        try {
+          const record = await fetchExpense(edit);
+          if (record) {
+            setIsEditMode(true);
+            setEditingId(record.id);
+            const category = record.category_id
+              ? await fetchCategoryById(record.category_id)
+              : null;
+            setFormData({
+              amount: String(record.amount),
+              category: category || null,
+              merchant: record.merchant || '',
+              date: record.date.split('T')[0],
+              paymentMethod: paymentMethods.find((p) => p.name === record.payment_method) || null,
+              description: record.description || '',
+              tags: [],
+              photo: null,
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      loadExpense();
+    }
+  }, [router.isReady, router.query, categories]);
 
   const paymentMethods: PaymentMethod[] = [
     { id: 1, name: "Tarjeta de Crédito", icon: "CreditCard", type: "card" },
@@ -131,14 +181,25 @@ const ManualExpenseRegister: React.FC = () => {
         throw new Error('Usuario no autenticado');
       }
 
-      await createExpense(user.id, {
-        category_id: String(formData.category?.id ?? ''),
-        amount: parseFloat(formData.amount),
-        date: formData.date,
-        merchant: formData.merchant,
-        description: formData.description,
-        payment_method: formData.paymentMethod?.name,
-      });
+      if (isEditMode && editingId) {
+        await updateExpense(editingId, {
+          category_id: String(formData.category?.id ?? ''),
+          amount: parseFloat(formData.amount),
+          date: formData.date,
+          merchant: formData.merchant,
+          description: formData.description,
+          payment_method: formData.paymentMethod?.name,
+        });
+      } else {
+        await createExpense(user.id, {
+          category_id: String(formData.category?.id ?? ''),
+          amount: parseFloat(formData.amount),
+          date: formData.date,
+          merchant: formData.merchant,
+          description: formData.description,
+          payment_method: formData.paymentMethod?.name,
+        });
+      }
 
       router.push('/financial-dashboard');
     } catch (error) {
@@ -151,17 +212,17 @@ const ManualExpenseRegister: React.FC = () => {
 
   const headerActions = [
     {
-      icon: "Settings",
-      label: "Configuración",
-      onClick: () => router.push('/categories-budget-management')
-    }
+      icon: 'Settings',
+      label: 'Configuración',
+      onClick: () => router.push('/categories-budget-management'),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <HeaderBar 
-        title="Registro Manual"
+      <HeaderBar
+        title={isEditMode ? 'Editar Gasto' : 'Registro Manual'}
         showBack={true}
         actions={headerActions}
       />
@@ -296,7 +357,7 @@ const ManualExpenseRegister: React.FC = () => {
                 <span>Guardando...</span>
               </div>
             ) : (
-              'Guardar Gasto'
+              isEditMode ? 'Guardar Cambios' : 'Guardar Gasto'
             )}
           </button>
         </div>
