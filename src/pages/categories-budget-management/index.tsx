@@ -6,6 +6,7 @@ import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import CategoryCard from './components/CategoryCard';
 import BudgetSlider from './components/BudgetSlider';
 import BudgetCreationModal from './components/BudgetCreationModal';
+import BudgetCard from './components/BudgetCard';
 import AlertSettings from './components/AlertSettings';
 import CategoryCreationWizard from './components/CategoryCreationWizard';
 import SpendingTrends from './components/SpendingTrends';
@@ -186,7 +187,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
               </h3>
               <button
                 onClick={() => setShowBudgetModal(true)}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 Agregar Presupuesto
               </button>
@@ -194,12 +195,7 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                 <div className="mt-4 space-y-3">
                   {budgets.map((b) => {
                     const cat = categories.find(c => c.id === b.category_id);
-                    return (
-                      <div key={b.id} className="p-3 bg-surface rounded-lg border border-border flex justify-between">
-                        <span>{cat?.name || 'Categoría'}</span>
-                        <span>{b.amount}</span>
-                      </div>
-                    );
+                    return <BudgetCard key={b.id} budget={b} category={cat} />;
                   })}
                 </div>
               )}

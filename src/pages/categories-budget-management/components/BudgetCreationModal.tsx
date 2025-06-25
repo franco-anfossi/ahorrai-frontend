@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from '@/components/AppIcon';
 import { CategoryRecord } from '@/lib/supabase/categories';
 import { BudgetInput } from '@/lib/supabase/budgets';
+import DatePicker from '../../manual-expense-register/components/DatePicker';
 
 interface BudgetCreationModalProps {
   isOpen: boolean
@@ -88,30 +89,25 @@ const BudgetCreationModal: React.FC<BudgetCreationModalProps> = ({ isOpen, categ
 
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">Fecha de Inicio</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
+            <DatePicker value={startDate} onChange={setStartDate} />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-text-primary mb-2">Fecha de Fin</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
+            <DatePicker value={endDate} onChange={setEndDate} />
           </div>
         </div>
 
         <div className="flex justify-end pt-2 space-x-2">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg hover:bg-surface-hover spring-transition">Cancelar</button>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-surface-hover text-text-primary rounded-lg hover:bg-surface focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          >
+            Cancelar
+          </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 spring-transition"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Guardar
           </button>
