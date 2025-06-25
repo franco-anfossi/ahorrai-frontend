@@ -4,7 +4,6 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import ExpenseSummaryCard from './components/ExpenseSummaryCard';
 import ExpenseDetailsSection from './components/ExpenseDetailsSection';
-import EditExpenseForm from './components/EditExpenseForm';
 import ActivityLog from './components/ActivityLog';
 import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import SplitExpenseModal from './components/SplitExpenseModal';
@@ -12,7 +11,6 @@ import ShareExpenseModal from './components/ShareExpenseModal';
 import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import { Expense } from '../../types';
-import { createClient } from '@/lib/supabase/component';
 import { fetchExpense } from '@/lib/supabase/expenses';
 import { fetchCategoryById, CategoryRecord } from '@/lib/supabase/categories';
 
@@ -202,7 +200,7 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
           <div className="space-y-6">
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas (proximamente)</h3>
               <div className="space-y-3">
                 <button
                   onClick={handleSplit}
@@ -278,14 +276,6 @@ const ExpenseDetailsEdit: React.FC<ExpenseDetailsEditProps> = () => {
           activityLog={expenseData.activityLog}
         />
       )}
-
-      <EditExpenseForm
-        isOpen={false}
-        onClose={() => {}}
-        expense={expenseData}
-        onSave={handleSaveEdit}
-        isSaving={isSaving}
-      />
 
       <BottomTabNavigation />
     </div>
