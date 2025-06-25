@@ -130,6 +130,8 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     try {
       await deleteCategory(category.id);
       setCategories((prev) => prev.filter((c) => c.id !== category.id));
+      // Remove budgets that were cascade deleted with the category
+      setBudgets((prev) => prev.filter((b) => b.category_id !== category.id));
     } catch (err) {
       console.error(err);
     }
