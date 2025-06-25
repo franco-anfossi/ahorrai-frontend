@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from 'components/AppIcon';
 
 import HeaderBar from 'components/ui/HeaderBar';
@@ -9,7 +9,8 @@ import AlertSettings from './components/AlertSettings';
 import CategoryCreationWizard from './components/CategoryCreationWizard';
 import SpendingTrends from './components/SpendingTrends';
 import AccountSection from './components/AccountSection';
-import { Category } from '../../types';
+import { CategoryInput, CategoryRecord, fetchCategories, createCategory, updateCategory, deleteCategory } from '@/lib/supabase/categories';
+import { createClient } from '@/lib/supabase/component';
 
 interface CategoriesBudgetManagementProps {}
 
@@ -22,83 +23,27 @@ interface Tab {
 const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = () => {
   const [activeTab, setActiveTab] = useState<string>('categories');
   const [showCreateWizard, setShowCreateWizard] = useState<boolean>(false);
+  const [editingCategory, setEditingCategory] = useState<CategoryRecord | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [budgetSliderOpen, setBudgetSliderOpen] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryRecord | null>(null);
+  const [categories, setCategories] = useState<CategoryRecord[]>([]);
+  const supabase = createClient();
 
-  // Mock data for categories
-  const [categories] = useState<Category[]>([
-    {
-      id: 1,
-      name: "Comida y Restaurantes",
-      icon: "UtensilsCrossed",
-      color: "#EF4444",
-      budget: 800,
-      spent: 645.30,
-      percentage: 80.7,
-      trend: "up",
-      trendValue: 12.5,
-      isOverBudget: false,
-      transactions: 24,
-      lastTransaction: "2024-01-15T10:30:00Z"
-    },
-    {
-      id: 2,
-      name: "Transporte",
-      icon: "Car",
-      color: "#3B82F6",
-      budget: 400,
-      spent: 267.80,
-      percentage: 66.9,
-      trend: "down",
-      trendValue: 8.2,
-      isOverBudget: false,
-      transactions: 18,
-      lastTransaction: "2024-01-14T08:15:00Z"
-    },
-    {
-      id: 3,
-      name: "Compras",
-      icon: "ShoppingBag",
-      color: "#10B981",
-      budget: 300,
-      spent: 223.90,
-      percentage: 74.6,
-      trend: "up",
-      trendValue: 15.3,
-      isOverBudget: false,
-      transactions: 12,
-      lastTransaction: "2024-01-13T16:45:00Z"
-    },
-    {
-      id: 4,
-      name: "Entretenimiento",
-      icon: "Film",
-      color: "#F59E0B",
-      budget: 200,
-      spent: 112.50,
-      percentage: 56.3,
-      trend: "down",
-      trendValue: 5.7,
-      isOverBudget: false,
-      transactions: 8,
-      lastTransaction: "2024-01-12T20:00:00Z"
-    },
-    {
-      id: 5,
-      name: "Servicios",
-      icon: "Zap",
-      color: "#8B5CF6",
-      budget: 150,
-      spent: 98.00,
-      percentage: 65.3,
-      trend: "stable",
-      trendValue: 0.0,
-      isOverBudget: false,
-      transactions: 6,
-      lastTransaction: "2024-01-11T14:20:00Z"
-    }
-  ]);
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        try {
+          const result = await fetchCategories(user.id);
+          setCategories(result);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    load();
+  }, []);
 
   const tabs: Tab[] = [
     { id: 'categories', label: 'Categorías', icon: 'Tag' },
@@ -121,13 +66,43 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     }
   };
 
+  const handleCreateCategory = async (data: CategoryInput): Promise<void> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    try {
+      const created = await createCategory(user.id, data);
+      setCategories((prev) => [...prev, created]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleEditCategory = async (category: CategoryRecord, data: CategoryInput): Promise<void> => {
+    try {
+      const updated = await updateCategory(category.id, data);
+      setCategories((prev) => prev.map((c) => (c.id === category.id ? updated : c)));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteCategory = async (category: CategoryRecord): Promise<void> => {
+    if (!window.confirm('Delete this category?')) return;
+    try {
+      await deleteCategory(category.id);
+      setCategories((prev) => prev.filter((c) => c.id !== category.id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleUpdateBudget = (categoryId: number, amount: number): void => {
     console.log('Update budget for category:', categoryId, 'amount:', amount);
     setBudgetSliderOpen(false);
     setSelectedCategory(null);
   };
 
-  const handleOpenBudgetSlider = (category: Category): void => {
+  const handleOpenBudgetSlider = (category: CategoryRecord): void => {
     setSelectedCategory(category);
     setBudgetSliderOpen(true);
   };
@@ -137,7 +112,10 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
     {
       icon: 'Plus',
       label: 'Crear Categoría',
-      onClick: () => setShowCreateWizard(true)
+      onClick: () => {
+        setEditingCategory(null);
+        setShowCreateWizard(true);
+      }
     },
     {
       icon: 'Save',
@@ -169,8 +147,11 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
                 <CategoryCard
                   key={category.id}
                   category={category}
-                  onEdit={() => console.log('Edit category:', category.id)}
-                  onDelete={() => console.log('Delete category:', category.id)}
+                  onEdit={() => {
+                    setEditingCategory(category);
+                    setShowCreateWizard(true);
+                  }}
+                  onDelete={() => handleDeleteCategory(category)}
                 />
               ))}
             </div>
@@ -265,9 +246,17 @@ const CategoriesBudgetManagement: React.FC<CategoriesBudgetManagementProps> = ()
       {/* Modals */}
       <CategoryCreationWizard
         isOpen={showCreateWizard}
-        onClose={() => setShowCreateWizard(false)}
-        onCreateCategory={(newCategory) => {
-          console.log('New category created:', newCategory);
+        initialData={editingCategory || undefined}
+        onClose={() => {
+          setShowCreateWizard(false);
+          setEditingCategory(null);
+        }}
+        onSave={(data) => {
+          if (editingCategory) {
+            handleEditCategory(editingCategory, data).then(() => setEditingCategory(null));
+          } else {
+            handleCreateCategory(data);
+          }
           setShowCreateWizard(false);
         }}
       />

@@ -1,93 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Icon from '@/components/AppIcon';
-import { Category } from '../../../types';
+import { CategoryRecord } from '@/lib/supabase/categories';
 
 interface CategoryCardProps {
-  category: Category;
+  category: CategoryRecord;
   onEdit: () => void;
   onDelete?: () => void;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit }) => {
-  const progressPercentage = Math.min(category.percentage, 100);
-  const isOverBudget = category.isOverBudget;
+const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, onDelete }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="bg-surface rounded-xl p-4 border border-border card-shadow">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+    <div className="relative bg-surface rounded-xl p-4 border border-border card-shadow">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div 
+          <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: `${category.color}20` }}
           >
-            <Icon 
-              name={category.icon} 
-              size={20} 
-              style={{ color: category.color }}
-            />
+            <Icon name={category.icon} size={20} style={{ color: category.color }} />
           </div>
-          <div>
-            <h3 className="font-semibold text-text-primary">{category.name}</h3>
-            <p className="text-sm text-text-secondary">
-              {category.transactions} transactions
-            </p>
-          </div>
+          <h3 className="font-semibold text-text-primary">{category.name}</h3>
         </div>
-        <button
-          onClick={onEdit}
-          className="p-2 rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-        >
-          <Icon name="Settings" size={18} className="text-text-secondary" />
-        </button>
-      </div>
-
-      {/* Budget Progress */}
-      <div className="mb-3">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-text-secondary">
-            {category.spent.toLocaleString('es-ES')} of {category.budget.toLocaleString('es-ES')}
-          </span>
-          <span className={`text-sm font-medium ${
-            isOverBudget ? 'text-error' : 'text-text-primary'
-          }`}>
-            {category.percentage.toFixed(0)}%
-          </span>
-        </div>
-        
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className={`h-2 rounded-full transition-all duration-300 ${
-              isOverBudget ? 'bg-error' : 'bg-accent'
-            }`}
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
-        
-        {isOverBudget && (
-          <div className="flex items-center space-x-1 mt-2">
-            <Icon name="AlertTriangle" size={14} className="text-error" />
-            <span className="text-xs text-error">
-              Over budget by {(category.spent - category.budget).toLocaleString('es-ES')}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-text-secondary">
-        <span>Last transaction: {new Date(category.lastTransaction).toLocaleDateString('es-ES')}</span>
-        <div className="flex items-center space-x-4">
-          <button className="flex items-center space-x-1 hover:text-text-primary spring-transition">
-            <Icon name="TrendingUp" size={12} />
-            <span>Trends</span>
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-2 rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          >
+            <Icon name="Settings" size={18} className="text-text-secondary" />
           </button>
-          <button className="flex items-center space-x-1 hover:text-text-primary spring-transition">
-            <Icon name="Archive" size={12} />
-            <span>Archive</span>
-          </button>
+          {menuOpen && (
+            <div className="absolute right-0 mt-2 w-32 bg-surface border border-border rounded-lg shadow-lg z-50">
+              <button
+                onClick={() => { setMenuOpen(false); onEdit(); }}
+                className="w-full text-left px-4 py-2 hover:bg-surface-hover spring-transition"
+              >
+                Edit
+              </button>
+              {onDelete && (
+                <button
+                  onClick={() => { setMenuOpen(false); onDelete(); }}
+                  className="w-full text-left px-4 py-2 text-error hover:bg-error-50 spring-transition"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
+      {menuOpen && <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />}
     </div>
   );
 };
