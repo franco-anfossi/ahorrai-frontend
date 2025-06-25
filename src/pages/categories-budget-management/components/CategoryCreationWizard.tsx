@@ -20,23 +20,35 @@ interface CategoryData {
 const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen, onClose, initialData, onSave }) => {
   const [step, setStep] = useState<number>(1);
   const [categoryData, setCategoryData] = useState<CategoryData>({
-    name: initialData?.name || '',
-    icon: initialData?.icon || 'Package',
-    color: initialData?.color || '#3B82F6',
+    name: '',
+    icon: 'Package',
+    color: '#3B82F6',
     budget: 500,
     description: ''
   });
 
   useEffect(() => {
+    if (!isOpen) return;
+    setStep(1);
+
     if (initialData) {
-      setCategoryData((prev) => ({
-        ...prev,
+      setCategoryData({
         name: initialData.name,
         icon: initialData.icon,
         color: initialData.color,
-      }));
+        budget: 500,
+        description: ''
+      });
+    } else {
+      setCategoryData({
+        name: '',
+        icon: 'Package',
+        color: '#3B82F6',
+        budget: 500,
+        description: ''
+      });
     }
-  }, [initialData]);
+  }, [isOpen, initialData]);
 
   const availableIcons: string[] = [
     'UtensilsCrossed', 'Car', 'Film', 'ShoppingBag', 'Heart', 'Zap',
@@ -122,8 +134,8 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
             <span className="text-sm text-text-secondary">{Math.round((step/3)*100)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-1">
-            <div 
-              className="h-1 bg-primary rounded-full transition-all duration-300"
+            <div
+              className="h-1 bg-primary-500 rounded-full transition-all duration-300"
               style={{ width: `${(step/3)*100}%` }}
             />
           </div>
@@ -179,7 +191,7 @@ const CategoryCreationWizard: React.FC<CategoryCreationWizardProps> = ({ isOpen,
                       onClick={() => handleInputChange('icon', iconName)}
                       className={`w-10 h-10 rounded-lg flex items-center justify-center spring-transition ${
                         categoryData.icon === iconName
-                          ? 'bg-primary text-white' :'bg-surface-hover text-text-secondary hover:bg-primary-50 hover:text-primary'
+                          ? 'bg-primary-500 text-white' :'bg-surface-hover text-text-secondary hover:bg-primary-50 hover:text-primary'
                       }`}
                     >
                       <Icon name={iconName} size={18} />
