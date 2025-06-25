@@ -127,6 +127,22 @@ const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
               ))}
             </div>
           </div>
+
+          {/* Preview */}
+          <div className="bg-background rounded-lg p-3">
+            <p className="text-sm font-medium text-text-primary mb-2">Vista previa</p>
+            <div className="flex items-center space-x-3">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: `${color}20` }}
+              >
+                <Icon name={icon} size={20} style={{ color }} />
+              </div>
+              <p className="font-medium text-text-primary">
+                {name || 'Nombre de la Categoría'}
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end pt-2 space-x-2">
