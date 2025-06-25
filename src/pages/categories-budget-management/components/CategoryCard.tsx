@@ -58,8 +58,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, progress = 0, onE
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${progress >= 100 ? 'bg-gradient-to-r from-error to-red-500' : progress > 80 ? 'bg-gradient-to-r from-warning to-orange-500' : 'bg-gradient-to-r from-success to-emerald-500'}`}
-            style={{ width: `${Math.min(progress, 100)}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${Math.min(progress, 100)}%`,
+              backgroundColor: category.color,
+            }}
           />
         </div>
       </div>
