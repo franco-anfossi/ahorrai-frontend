@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import Icon from '@/components/AppIcon';
 
 interface AmountInputProps {
   value: string;
   onChange: (value: string) => void;
   error?: string;
   currency?: string;
+  onCurrencyChange?: (currency: string) => void;
 }
 
 const AmountInput: React.FC<AmountInputProps> = ({ 
   value, 
   onChange, 
   error, 
-  currency = "USD" 
+  currency = 'CLP',
+  onCurrencyChange
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -39,7 +40,14 @@ const AmountInput: React.FC<AmountInputProps> = ({
     onChange(inputValue);
   };
 
-  const quickAmounts: number[] = [10, 25, 50, 100, 200, 500];
+  const quickAmountsMap: Record<string, number[]> = {
+    CLP: [1000, 2000, 5000, 10000, 20000, 50000],
+    USD: [10, 25, 50, 100, 200, 500],
+    EUR: [10, 20, 50, 100, 200, 500],
+    MXN: [50, 100, 200, 500, 1000, 2000]
+  };
+
+  const quickAmounts: number[] = quickAmountsMap[currency] || quickAmountsMap.USD;
 
   return (
     <div>
@@ -94,11 +102,11 @@ const AmountInput: React.FC<AmountInputProps> = ({
       <div className="mt-4">
         <p className="text-xs text-text-secondary mb-2">Moneda</p>
         <div className="flex space-x-2">
-          {['USD', 'EUR', 'MXN'].map((curr) => (
+          {['CLP', 'USD', 'EUR', 'MXN'].map((curr) => (
             <button
               key={curr}
               type="button"
-              onClick={() => console.log('Currency changed to:', curr)}
+              onClick={() => onCurrencyChange?.(curr)}
               className={`px-3 py-1 text-xs font-medium rounded-lg spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
                 currency === curr
                   ? 'bg-primary text-white'

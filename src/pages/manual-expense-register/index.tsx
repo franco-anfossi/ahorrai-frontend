@@ -40,6 +40,7 @@ const ManualExpenseRegister: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showOptionalFields, setShowOptionalFields] = useState(false);
+  const [currency, setCurrency] = useState('CLP');
   const [formData, setFormData] = useState<FormData>({
     amount: '',
     category: null,
@@ -173,7 +174,8 @@ const ManualExpenseRegister: React.FC = () => {
             value={formData.amount}
             onChange={(value) => handleInputChange('amount', value)}
             error={errors.amount}
-            currency="USD"
+            currency={currency}
+            onCurrencyChange={setCurrency}
           />
 
           {/* Category Selector */}
