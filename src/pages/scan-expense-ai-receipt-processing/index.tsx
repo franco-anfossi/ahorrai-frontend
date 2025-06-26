@@ -6,6 +6,7 @@ import CameraCapture from './components/CameraCapture';
 import ProcessingLoader from './components/ProcessingLoader';
 import Image from '@/components/AppImage';
 import Icon from '@/components/AppIcon';
+import ReceiptTips from './components/ReceiptTips';
 import { fetchCategories, CategoryRecord } from '@/lib/supabase/categories';
 import { createClient } from '@/lib/supabase/component';
 import axios from 'axios';
@@ -110,6 +111,7 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
                 Analizar
               </button>
             </div>
+            <ReceiptTips />
             <input
               ref={fileInputRef}
               type="file"
