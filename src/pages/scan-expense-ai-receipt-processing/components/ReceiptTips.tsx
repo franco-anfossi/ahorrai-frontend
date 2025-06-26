@@ -2,7 +2,7 @@ import React from 'react';
 import Icon from '@/components/AppIcon';
 
 const ReceiptTips: React.FC = () => (
-  <div className="bg-primary-50 rounded-lg p-4">
+  <div className="bg-primary-50 rounded-lg p-4 w-full">
     <div className="flex items-start space-x-3">
       <Icon name="Lightbulb" size={20} className="text-primary mt-0.5 flex-shrink-0" />
       <div>
