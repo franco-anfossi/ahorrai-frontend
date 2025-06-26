@@ -133,7 +133,7 @@ const ProcessingLoader: React.FC<ProcessingLoaderProps> = ({ progress, image, on
         {renderProgressRing()}
         
         <h2 className="text-xl font-semibold text-text-primary mt-6 mb-2">
-          Procesando Recibo
+          Analizando Boleta
         </h2>
         
         <p className="text-text-secondary text-center mb-8">
