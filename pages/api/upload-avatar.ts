@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
       )
 
-      const base = process.env.S3_ENDPOINT?.replace(/\/$/, '')
+      const base = process.env.S3_ENDPOINT?.replace(/\/s3\/?$/, '/object/public')
       const url = `${base}/${process.env.S3_BUCKET_NAME}/${key}`
       res.status(200).json({ url })
     } catch (error) {
