@@ -43,33 +43,35 @@ const ProcessingResult: React.FC<ProcessingResultProps> = ({ result, categories,
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex flex-col items-center space-y-2">
+      <div className="flex items-center space-x-4">
         {image && (
-          <img src={image} alt="Receipt" className="w-full max-w-xs rounded-lg object-contain mb-2" />
+          <img src={image} alt="Receipt" className="w-40 max-w-xs rounded-lg object-contain" />
         )}
-        <div className="relative w-20 h-20">
-          <svg viewBox="0 0 36 36" className="w-full h-full">
-            <path
-              d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0-31.831"
-              fill="none"
-              stroke="currentColor"
-              className="text-gray-200"
-              strokeWidth="4"
-            />
-            <path
-              d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0-31.831"
-              fill="none"
-              stroke="currentColor"
-              className="text-primary"
-              strokeWidth="4"
-              strokeDasharray={`${progress}, 100`}
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-text-primary">
-            {progress}%
-          </span>
+        <div className="flex flex-col items-center space-y-2">
+          <div className="relative w-20 h-20">
+            <svg viewBox="0 0 36 36" className="w-full h-full">
+              <path
+                d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0-31.831"
+                fill="none"
+                stroke="currentColor"
+                className="text-gray-200"
+                strokeWidth="4"
+              />
+              <path
+                d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831a 15.9155 15.9155 0 0 1 0-31.831"
+                fill="none"
+                stroke="currentColor"
+                className="text-primary"
+                strokeWidth="4"
+                strokeDasharray={`${progress}, 100`}
+              />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-text-primary">
+              {progress}%
+            </span>
+          </div>
+          <p className="text-sm text-text-secondary text-center">Confianza del reconocimiento</p>
         </div>
-        <p className="text-sm text-text-secondary text-center">Confianza del reconocimiento</p>
       </div>
 
       <div className="space-y-4">
