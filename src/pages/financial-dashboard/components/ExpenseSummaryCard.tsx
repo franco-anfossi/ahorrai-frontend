@@ -14,9 +14,10 @@ interface ExpenseSummaryCardProps {
 
 const ExpenseSummaryCard: React.FC<ExpenseSummaryCardProps> = ({ data, onRefresh }) => {
   const { spent, budget, currency } = data;
-  const percentage = (spent / budget) * 100;
+  const percentage = budget > 0 ? (spent / budget) * 100 : 0;
   const remaining = budget - spent;
   const isOverBudget = spent > budget;
+  const showProgress = budget > 0;
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('es-ES', {
@@ -70,26 +71,28 @@ const ExpenseSummaryCard: React.FC<ExpenseSummaryCardProps> = ({ data, onRefresh
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-text-secondary">Uso del Presupuesto</span>
-          <span className={`text-sm font-medium ${isOverBudget ? 'text-error' : 'text-text-primary'}`}>
-            {percentage.toFixed(1)}%
-          </span>
+      {showProgress && (
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-text-secondary">Uso del Presupuesto</span>
+            <span className={`text-sm font-medium ${isOverBudget ? 'text-error' : 'text-text-primary'}`}>
+              {percentage.toFixed(1)}%
+            </span>
+          </div>
+
+          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                isOverBudget
+                  ? 'bg-gradient-to-r from-error to-red-500'
+                  : percentage > 80
+                    ? 'bg-gradient-to-r from-warning to-orange-500' : 'bg-gradient-to-r from-success to-emerald-500'
+              }`}
+              style={{ width: `${Math.min(percentage, 100)}%` }}
+            />
+          </div>
         </div>
-        
-        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-          <div 
-            className={`h-full rounded-full transition-all duration-500 ${
-              isOverBudget 
-                ? 'bg-gradient-to-r from-error to-red-500' 
-                : percentage > 80 
-                  ? 'bg-gradient-to-r from-warning to-orange-500' :'bg-gradient-to-r from-success to-emerald-500'
-            }`}
-            style={{ width: `${Math.min(percentage, 100)}%` }}
-          />
-        </div>
-      </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
