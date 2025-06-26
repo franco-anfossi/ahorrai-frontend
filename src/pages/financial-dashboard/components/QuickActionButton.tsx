@@ -21,7 +21,7 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = ({ onAction }) => {
       id: 'scan',
       label: 'Escanear Recibo',
       icon: 'ScanLine',
-      color: 'bg-primary',
+      color: 'bg-primary-600',
       description: 'Procesar automáticamente'
     },
     {
@@ -31,13 +31,6 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = ({ onAction }) => {
       color: 'bg-success',
       description: 'Agregar gasto manualmente'
     },
-    {
-      id: 'camera',
-      label: 'Tomar Foto',
-      icon: 'Camera',
-      color: 'bg-warning',
-      description: 'Capturar con cámara'
-    }
   ];
 
   const handleAction = (actionId: string): void => {
