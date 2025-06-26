@@ -33,14 +33,14 @@ const EditableExpenseCard: React.FC<EditableExpenseCardProps> = ({ expense, cate
   const selectedMethod = paymentMethods.find(m => m.name === local.payment_method) || null
 
   return (
-    <div className="bg-surface rounded-lg p-6 space-y-4">
+    <div className="bg-surface rounded-lg p-6 space-y-4 border border-border shadow-md">
       <div className="flex items-center justify-between space-x-2">
         <input
           type="text"
           value={local.merchant || ''}
           onChange={e => handleChange('merchant', e.target.value)}
           placeholder="Comercio"
-          className="flex-1 text-sm font-medium bg-transparent focus:outline-none"
+          className="flex-1 text-sm font-medium rounded-lg focus:outline-none border-border"
         />
         <input
           type="number"

@@ -25,7 +25,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   return (
     <div className="relative">
       <label className="block text-sm font-medium text-text-primary mb-2">
-        Categoría *
+        Categoría
       </label>
       
       <button
