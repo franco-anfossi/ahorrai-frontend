@@ -70,11 +70,6 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  const handleDone = () => {
-    setCapturedImage(null);
-    setResult(null);
-    setCurrentStep('capture');
-  };
 
   const handleAnalyze = async (): Promise<void> => {
     if (!capturedImage) return;
@@ -153,7 +148,7 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
         )}
 
         {currentStep === 'result' && result && (
-          <ProcessingResult result={result} categories={categories} image={capturedImage} onDone={handleDone} />
+          <ProcessingResult result={result} categories={categories} image={capturedImage} />
         )}
       </div>
       <BottomTabNavigation />
