@@ -4,6 +4,7 @@ import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import CameraCapture from './components/CameraCapture';
 import ProcessingLoader from './components/ProcessingLoader';
+import ProcessingResult from './components/ProcessingResult';
 import Image from '@/components/AppImage';
 import Icon from '@/components/AppIcon';
 import ReceiptTips from './components/ReceiptTips';
@@ -11,7 +12,7 @@ import { fetchCategories, CategoryRecord } from '@/lib/supabase/categories';
 import { createClient } from '@/lib/supabase/component';
 import axios from 'axios';
 
-type ProcessingStep = 'capture' | 'preview' | 'processing';
+type ProcessingStep = 'capture' | 'preview' | 'processing' | 'result';
 
 const ScanExpenseAIReceiptProcessing: React.FC = () => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
+  const [result, setResult] = useState<{ confidence: number; expenses: any[] } | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -68,6 +70,12 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
     fileInputRef.current?.click();
   };
 
+  const handleDone = () => {
+    setCapturedImage(null);
+    setResult(null);
+    setCurrentStep('capture');
+  };
+
   const handleAnalyze = async (): Promise<void> => {
     if (!capturedImage) return;
     setCurrentStep('processing');
@@ -86,12 +94,12 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
           },
         }
       );
-      console.log(response)
+      if (response.data) {
+        setResult(response.data);
+        setCurrentStep('result');
+      }
     } catch (err) {
       console.error('Error sending receipt:', err);
-    } finally {
-      setCapturedImage(null);
-      setCurrentStep('capture');
     }
   };
 
@@ -142,6 +150,10 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
 
         {currentStep === 'processing' && (
           <ProcessingLoader image={capturedImage || ''} />
+        )}
+
+        {currentStep === 'result' && result && (
+          <ProcessingResult result={result} categories={categories} image={capturedImage} onDone={handleDone} />
         )}
       </div>
       <BottomTabNavigation />
