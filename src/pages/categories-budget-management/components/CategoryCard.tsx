@@ -37,6 +37,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
     }).format(val);
   
   const progressPercent = progress <= 1 ? progress * 100 : progress;
+  const showProgress = progressPercent > 0;
   return (
     <div className="relative">
       <div className="flex items-center justify-between p-3 bg-surface rounded-lg hover:bg-surface-hover spring-transition card-shadow">
@@ -56,20 +57,22 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
                 </span>
               )}
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(progressPercent, 100)}%`,
-                    backgroundColor: category.color,
-                  }}
-                />
+            {showProgress && (
+              <div className="flex items-center space-x-2">
+                <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(progressPercent, 100)}%`,
+                      backgroundColor: category.color,
+                    }}
+                  />
+                </div>
+                <span className="text-xs text-text-secondary font-medium min-w-[40px] text-right">
+                  {Math.round(progressPercent)}%
+                </span>
               </div>
-              <span className="text-xs text-text-secondary font-medium min-w-[40px] text-right">
-                {Math.round(progressPercent)}%
-              </span>
-            </div>
+            )}
             {category.description && (
               <p className="text-xs text-text-secondary mt-1 truncate">
                 {category.description}
