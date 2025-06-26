@@ -1,3 +1,4 @@
+import ReceiptTips from './ReceiptTips';
 import React, { useRef } from 'react';
 import Icon from '@/components/AppIcon';
 
@@ -55,17 +56,4 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture }) => {
           </div>
         </div>
 
-        {/* Hidden File Input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-      </div>
-    </div>
-  );
-};
-
-export default CameraCapture; 
+        <ReceiptTips />
