@@ -61,7 +61,6 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
       {/* Category List */}
       <div className="space-y-4">
         {data.map((category, index) => {
-          console.log(category)
           if (category.budget !== 0 && category.budget !== undefined && category.budget !== null) {
             category.percentage = (category.amount / category.budget) * 100;
           }
