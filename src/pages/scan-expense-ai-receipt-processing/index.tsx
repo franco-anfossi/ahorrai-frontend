@@ -36,6 +36,16 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
     load();
   }, []);
 
+  function dataURLtoBlob(dataURL: string): Blob {
+    const arr = dataURL.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new Blob([u8arr], { type: mime || 'image/jpeg' });
+  }
+
   const handleCapture = (imageData: string): void => {
     setCapturedImage(imageData);
     setCurrentStep('preview');
@@ -61,14 +71,22 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
   const handleAnalyze = async (): Promise<void> => {
     if (!capturedImage) return;
     setCurrentStep('processing');
+    const blob = dataURLtoBlob(capturedImage);
     try {
-      await axios.post(
+      const form = new FormData();
+      form.append('image', blob, 'receipt.jpg');
+      form.append('categories', JSON.stringify(categories));
+
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/process-receipt`,
+        form,
         {
-          image: capturedImage,
-          categories,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
       );
+      console.log(response)
     } catch (err) {
       console.error('Error sending receipt:', err);
     } finally {
