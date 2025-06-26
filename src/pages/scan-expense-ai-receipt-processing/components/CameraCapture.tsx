@@ -3,10 +3,9 @@ import Icon from '@/components/AppIcon';
 
 interface CameraCaptureProps {
   onCapture: (imageData: string) => void;
-  onBatchMode: () => void;
 }
 
-const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onBatchMode }) => {
+const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
 
@@ -86,14 +85,6 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onBatchMode })
           >
             <Icon name="Image" size={20} className="text-text-secondary" />
             <span className="font-medium text-text-primary">Galería</span>
-          </button>
-          
-          <button
-            onClick={onBatchMode}
-            className="flex-1 flex items-center justify-center space-x-2 py-3 bg-surface border border-border rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-          >
-            <Icon name="Layers" size={20} className="text-text-secondary" />
-            <span className="font-medium text-text-primary">Modo Lote</span>
           </button>
         </div>
 
