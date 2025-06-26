@@ -1,6 +1,7 @@
-import React from 'react'
-import Icon from '@/components/AppIcon'
+import React, { useState } from 'react'
 import { CategoryRecord } from '@/lib/supabase/categories'
+import { PaymentMethod } from '@/types'
+import EditableExpenseCard from './EditableExpenseCard'
 
 interface Expense {
   amount: number
@@ -20,15 +21,25 @@ interface ProcessingResultProps {
   result: ProcessingResultData
   categories: CategoryRecord[]
   image?: string | null
-  onDone: () => void
 }
 
-const ProcessingResult: React.FC<ProcessingResultProps> = ({ result, categories, image, onDone }) => {
-  const getCategory = (id: string) => categories.find(c => c.id === id)
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount)
-  }
+const ProcessingResult: React.FC<ProcessingResultProps> = ({ result, categories, image }) => {
   const progress = Math.round(result.confidence * 100)
+
+  const [expenses, setExpenses] = useState<Expense[]>(result.expenses)
+
+  const paymentMethods: PaymentMethod[] = [
+    { id: 1, name: 'Tarjeta de Crédito', icon: 'CreditCard', type: 'card' },
+    { id: 2, name: 'Tarjeta de Débito', icon: 'CreditCard', type: 'card' },
+    { id: 3, name: 'Efectivo', icon: 'DollarSign', type: 'cash' },
+    { id: 4, name: 'Transferencia', icon: 'Banknote', type: 'transfer' },
+    { id: 5, name: 'PayPal', icon: 'CreditCard', type: 'digital' },
+    { id: 6, name: 'Apple Pay', icon: 'Smartphone', type: 'digital' }
+  ]
+
+  const handleExpenseChange = (index: number, value: Expense) => {
+    setExpenses(prev => prev.map((exp, i) => (i === index ? value : exp)))
+  }
 
   return (
     <div className="p-4 space-y-6">
@@ -61,43 +72,17 @@ const ProcessingResult: React.FC<ProcessingResultProps> = ({ result, categories,
         <p className="text-sm text-text-secondary text-center">Confianza del reconocimiento</p>
       </div>
 
-      <div className="space-y-3">
-        {result.expenses.map((exp, idx) => {
-          const cat = getCategory(exp.category_id)
-          return (
-            <div key={idx} className="bg-surface rounded-lg p-4 flex space-x-3">
-              <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Icon name={cat?.icon || 'Receipt'} size={20} className="text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-medium text-text-primary truncate">
-                    {exp.merchant || 'Gasto'}
-                  </h4>
-                  <span className="text-sm font-semibold text-text-primary">
-                    {formatCurrency(exp.amount)}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-text-secondary">
-                  <span>{cat?.name || 'Sin categoría'}</span>
-                  <span>•</span>
-                  <span>{new Date(exp.date).toLocaleDateString('es-CL')}</span>
-                </div>
-                {exp.description && (
-                  <p className="text-xs text-text-muted mt-1 truncate">{exp.description}</p>
-                )}
-              </div>
-            </div>
-          )
-        })}
+      <div className="space-y-4">
+        {expenses.map((exp, idx) => (
+          <EditableExpenseCard
+            key={idx}
+            expense={exp}
+            categories={categories}
+            paymentMethods={paymentMethods}
+            onChange={value => handleExpenseChange(idx, value)}
+          />
+        ))}
       </div>
-
-      <button
-        onClick={onDone}
-        className="w-full py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-700 spring-transition"
-      >
-        Aceptar
-      </button>
     </div>
   )
 }
