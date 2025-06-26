@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Icon from '@/components/AppIcon';
 
 interface CameraCaptureProps {
@@ -7,7 +7,6 @@ interface CameraCaptureProps {
 
 const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isCapturing, setIsCapturing] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
@@ -25,47 +24,8 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture }) => {
     fileInputRef.current?.click();
   };
 
-  const handleCameraCapture = (): void => {
-    setIsCapturing(true);
-    // Simulate camera capture
-    setTimeout(() => {
-      // Mock captured image
-      const mockImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2QjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkltYWdlbiBkZSBSZWNpYm8gQ2FwdHVyYWRhPC90ZXh0Pgo8L3N2Zz4K';
-      onCapture(mockImage);
-      setIsCapturing(false);
-    }, 1000);
-  };
-
   return (
     <div className="flex-1 flex flex-col">
-      {/* Camera Viewport */}
-      <div className="flex-1 relative bg-black">
-
-        {/* Camera Overlay */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Corner Guides */}
-          <div className="absolute top-8 left-8 w-16 h-16 border-l-4 border-t-4 border-white rounded-tl-lg"></div>
-          <div className="absolute top-8 right-8 w-16 h-16 border-r-4 border-t-4 border-white rounded-tr-lg"></div>
-          <div className="absolute bottom-8 left-8 w-16 h-16 border-l-4 border-b-4 border-white rounded-bl-lg"></div>
-          <div className="absolute bottom-8 right-8 w-16 h-16 border-r-4 border-b-4 border-white rounded-br-lg"></div>
-        </div>
-
-        {/* Capture Button */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <button
-            onClick={handleCameraCapture}
-            disabled={isCapturing}
-            className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 spring-transition focus:outline-none focus:ring-4 focus:ring-white/50 disabled:opacity-50"
-          >
-            {isCapturing ? (
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <div className="w-12 h-12 bg-primary rounded-full"></div>
-            )}
-          </button>
-        </div>
-      </div>
-
       {/* Camera Controls */}
       <div className="bg-surface p-4 space-y-4">
         {/* Action Buttons */}
