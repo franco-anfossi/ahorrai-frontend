@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { createClient } from '@/lib/supabase/component';
 import { Profile } from '@/types';
+import { DEFAULT_AVATAR_URL } from '@/lib/constants';
 
 const AccountSection: React.FC = () => {
   const router = useRouter();
@@ -102,9 +103,11 @@ const AccountSection: React.FC = () => {
             className="w-24 h-24 rounded-full object-cover border border-border"
           />
         ) : (
-          <div className="w-24 h-24 rounded-full bg-gray-200 border border-border flex items-center justify-center text-sm text-text-secondary">
-            Sin Foto
-          </div>
+          <img
+            src={DEFAULT_AVATAR_URL}
+            alt="Avatar"
+            className="w-24 h-24 rounded-full object-cover border border-border"
+          />
         )}
         <input
           type="file"

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/component";
 import { fetchCategories, CategoryRecord } from "@/lib/supabase/categories";
 import { fetchBudgets, BudgetRecord } from "@/lib/supabase/budgets";
 import { fetchExpenses, ExpenseRecord, deleteExpense } from "@/lib/supabase/expenses";
+import { DEFAULT_AVATAR_URL } from "@/lib/constants";
 
 import ExpenseSummaryCard from "./components/ExpenseSummaryCard";
 import SpendingChart from "./components/SpendingChart";
@@ -263,7 +264,7 @@ const FinancialDashboard: NextPage = () => {
           <div className="w-10 h-10 rounded-full overflow-hidden">
             {currentUser && (
               <img
-                src={currentUser.avatar_url ?? ""}
+                src={currentUser.avatar_url ?? DEFAULT_AVATAR_URL}
                 alt={currentUser.full_name ?? currentUser.email}
                 className="w-full h-full object-cover"
               />
