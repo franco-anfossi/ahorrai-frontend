@@ -106,7 +106,7 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
               </button>
               <button
                 onClick={handleAnalyze}
-                className="flex-1 py-3 bg-primary text-white rounded-lg font-medium spring-transition hover:bg-primary-dark"
+                className="flex-1 py-3 bg-primary-600 text-white rounded-lg font-medium spring-transition hover:bg-primary-700"
               >
                 Analizar
               </button>
