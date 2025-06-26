@@ -4,11 +4,12 @@ import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import CameraCapture from './components/CameraCapture';
 import ProcessingLoader from './components/ProcessingLoader';
+import Image from '@/components/AppImage';
 import { fetchCategories, CategoryRecord } from '@/lib/supabase/categories';
 import { createClient } from '@/lib/supabase/component';
 import axios from 'axios';
 
-type ProcessingStep = 'capture' | 'processing';
+type ProcessingStep = 'capture' | 'preview' | 'processing';
 
 const ScanExpenseAIReceiptProcessing: React.FC = () => {
   const router = useRouter();
@@ -32,17 +33,26 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
     load();
   }, []);
 
-  const handleCapture = async (imageData: string): Promise<void> => {
+  const handleCapture = (imageData: string): void => {
     setCapturedImage(imageData);
+    setCurrentStep('preview');
+  };
+
+  const handleAnalyze = async (): Promise<void> => {
+    if (!capturedImage) return;
     setCurrentStep('processing');
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/process-receipt`, {
-        image: imageData,
-        categories,
-      });
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/process-receipt`,
+        {
+          image: capturedImage,
+          categories,
+        }
+      );
     } catch (err) {
       console.error('Error sending receipt:', err);
     } finally {
+      setCapturedImage(null);
       setCurrentStep('capture');
     }
   };
@@ -58,12 +68,25 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
         {currentStep === 'capture' && (
           <CameraCapture onCapture={handleCapture} />
         )}
+
+        {currentStep === 'preview' && capturedImage && (
+          <div className="p-4 flex flex-col items-center space-y-4">
+            <Image
+              src={capturedImage}
+              alt="Preview"
+              className="w-full max-w-xs rounded-lg object-contain"
+            />
+            <button
+              onClick={handleAnalyze}
+              className="w-full py-3 bg-primary text-white rounded-lg font-medium spring-transition hover:bg-primary-dark"
+            >
+              Analizar
+            </button>
+          </div>
+        )}
+
         {currentStep === 'processing' && (
-          <ProcessingLoader
-            progress={50}
-            image={capturedImage || ''}
-            onError={() => setCurrentStep('capture')}
-          />
+          <ProcessingLoader image={capturedImage || ''} />
         )}
       </div>
       <BottomTabNavigation />

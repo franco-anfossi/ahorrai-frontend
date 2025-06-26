@@ -40,15 +40,6 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture }) => {
     <div className="flex-1 flex flex-col">
       {/* Camera Viewport */}
       <div className="flex-1 relative bg-black">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <Icon name="Camera" size={32} className="text-white" />
-            </div>
-            <p className="text-lg font-medium mb-2">Cámara de Recibos</p>
-            <p className="text-sm text-white/80">Apunta la cámara al recibo</p>
-          </div>
-        </div>
 
         {/* Camera Overlay */}
         <div className="absolute inset-0 pointer-events-none">
