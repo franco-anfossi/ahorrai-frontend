@@ -10,6 +10,7 @@ export const config = {
 }
 
 const s3 = new S3Client({
+  forcePathStyle: true,
   endpoint: process.env.S3_ENDPOINT,
   region: process.env.S3_REGION,
   credentials: {
