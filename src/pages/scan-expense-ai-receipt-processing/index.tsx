@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import HeaderBar from 'components/ui/HeaderBar';
 import BottomTabNavigation from 'components/ui/BottomTabNavigation';
 import CameraCapture from './components/CameraCapture';
 import ProcessingLoader from './components/ProcessingLoader';
 import Image from '@/components/AppImage';
+import Icon from '@/components/AppIcon';
 import { fetchCategories, CategoryRecord } from '@/lib/supabase/categories';
 import { createClient } from '@/lib/supabase/component';
 import axios from 'axios';
@@ -15,6 +16,7 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<ProcessingStep>('capture');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<CategoryRecord[]>([]);
 
   useEffect(() => {
@@ -36,6 +38,23 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
   const handleCapture = (imageData: string): void => {
     setCapturedImage(imageData);
     setCurrentStep('preview');
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setCapturedImage(result);
+        setCurrentStep('preview');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleGallerySelect = (): void => {
+    fileInputRef.current?.click();
   };
 
   const handleAnalyze = async (): Promise<void> => {
@@ -76,12 +95,28 @@ const ScanExpenseAIReceiptProcessing: React.FC = () => {
               alt="Preview"
               className="w-full max-w-xs rounded-lg object-contain"
             />
-            <button
-              onClick={handleAnalyze}
-              className="w-full py-3 bg-primary text-white rounded-lg font-medium spring-transition hover:bg-primary-dark"
-            >
-              Analizar
-            </button>
+            <div className="flex w-full space-x-3">
+              <button
+                onClick={handleGallerySelect}
+                className="flex-1 flex items-center justify-center space-x-2 py-3 bg-surface border border-border rounded-lg hover:bg-surface-hover spring-transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              >
+                <Icon name="Image" size={20} className="text-text-secondary" />
+                <span className="font-medium text-text-primary">Galería</span>
+              </button>
+              <button
+                onClick={handleAnalyze}
+                className="flex-1 py-3 bg-primary text-white rounded-lg font-medium spring-transition hover:bg-primary-dark"
+              >
+                Analizar
+              </button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
           </div>
         )}
 
